@@ -13,9 +13,12 @@
 # limitations under the License.
 
 from flask import Flask
+from flask import render_template
 
 application = Flask (__name__)
 
 @application.route ('/')
 def hello():
-    return 'Beagle Wizard'
+    """Landing page."""
+    output = render_template ('index.html')
+    return output
