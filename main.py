@@ -18,7 +18,7 @@ from flask import render_template
 application = Flask (__name__)
 
 @application.route ('/')
-def hello():
+def index ():
     """Landing page."""
     output = render_template ('index.html')
     return output
