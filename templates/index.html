@@ -8,7 +8,24 @@
     </head>
     <body>
         <div>
-            <p>This space intentionally left blank.</p>
+            {% set messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            {% if not current_user.is_authenticated %}
+                <form action="{{ urls.login }}" method="post">
+                    {{ login_form.hidden_tag() }}
+                    <div>{{ login_form.name.label }}</div>
+                    <div>{{ login_form.name(size=32) }}</div>
+                    <div>{{ login_form.password.label }}</div>
+                    <div>{{ login_form.password(size=32) }}</div>
+                    <div>{{ login_form.submit() }}</div>
+                </form>
+            {% else %}
+                {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+            {% endif %}
         </div>
     </body>
 </html>
