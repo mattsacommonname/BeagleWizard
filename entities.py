@@ -68,6 +68,9 @@ class Bookmark(db.Entity):
     modified = Required(datetime, precision=6)
     """Last modification timestamp."""
 
+    trashed = Required(bool, default=False)
+    """Trashed status of the bookmark."""
+
     user = Required(User)
     """User relationship."""
 
@@ -83,6 +86,9 @@ class Tag(db.Entity):
 
     label = Required(str, max_len=32)
     """Visible label for the tag."""
+
+    trashed = Required(bool, default=False)
+    """Trashed status of the tag."""
 
     user = Required(User)
     """User relationship."""
