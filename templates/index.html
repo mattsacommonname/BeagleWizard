@@ -7,12 +7,10 @@
         <title>Beagle Wizard</title>
     </head>
     <body>
-        <div>
-            {% set messages = get_flashed_messages() %}
-            {% for message in messages %}
-                <div>{{ message }}</div>
-            {% endfor %}
-        </div>
+        {% set messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
         <div>
             {% if not current_user.is_authenticated %}
                 <form action="{{ urls.login }}" method="post">
@@ -24,7 +22,37 @@
                     <div>{{ login_form.submit() }}</div>
                 </form>
             {% else %}
-                {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+                <div>
+                    {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+                </div>
+                <form action="{{ urls.addbookmark }}" method="post">
+                    {{ login_form.hidden_tag() }}
+                    <div>{{ add_bookmark_form.label.label }}</div>
+                    <div>{{ add_bookmark_form.label(size=32) }}</div>
+                    <div>{{ add_bookmark_form.url.label }}</div>
+                    <div>{{ add_bookmark_form.url(size=32) }}</div>
+                    <div>{{ add_bookmark_form.text.label }}</div>
+                    <div>{{ add_bookmark_form.text(size=32) }}</div>
+                    <div>{{ add_bookmark_form.submit() }}</div>
+                </form>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Link</td>
+                            <td>Words</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bookmark in bookmarks %}
+                            <tr>
+                                <td>
+                                    <a href="{{ bookmark.url }}">{{ bookmark.label }}</a>
+                                </td>
+                                <td>{{ bookmark.text }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% endif %}
         </div>
     </body>

@@ -12,13 +12,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from entities import User as UserEntity
-from flask import flash, redirect, render_template, request, url_for
-from flask_login import login_user, logout_user
-from forms import LoginForm
+from datetime import datetime
+from entities import Bookmark as BookmarkEntity, User as UserEntity
+from flask import flash, get_flashed_messages, redirect, render_template, request, url_for
+from flask_login import current_user, login_user, logout_user
+from forms import AddBookmarkForm, LoginForm
 from main import application
-from pony.orm import db_session
+from pony.orm import db_session, select
 from werkzeug.security import check_password_hash, generate_password_hash
+
+
+@application.route('/addbookmark', methods=['POST'])
+def addbookmark():
+    form = AddBookmarkForm()
+
+    redirect_url = url_for('index')
+    redirect_response = redirect(redirect_url)
+
+    if not form.validate_on_submit():
+        for error in form.label.errors:
+            flash('{}: {}'.format(form.label.label.text, error))
+        for error in form.url.errors:
+            flash('{}: {}'.format(form.url.label.text, error))
+
+        return redirect_response
+
+    with db_session:
+        user_entity = current_user.get_entity()
+        bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
+                                  created=datetime.utcnow(), modified=datetime.utcnow(), user=user_entity)
+
+        flash('Added bookmark "{}"'.format(bookmark.label))
+
+    return redirect_response
+
+
+def get_bookmarks(user):
+    if user is None or not user.is_authenticated:
+        return None
+
+    user_entity = user.get_entity()
+    bookmarks = select(b for b in BookmarkEntity if b.user == user_entity)
+
+    return bookmarks
+
+
+@application.route('/')
+def index():
+    """Landing page."""
+
+    add_bookmark_form = AddBookmarkForm()
+    login_form = LoginForm()
+    urls = {
+        'addbookmark': url_for('addbookmark'),
+        'login': url_for('login'),
+        'logout': url_for('logout')
+    }
+    messages = get_flashed_messages()
+    with db_session:
+        bookmarks = get_bookmarks(current_user)
+
+        output = render_template('index.html', add_bookmark_form=add_bookmark_form, bookmarks=bookmarks,
+                                 login_form=login_form, messages=messages, urls=urls)
+    return output
 
 
 @application.route('/login', methods=['POST'])
@@ -73,17 +129,3 @@ def logout():
     redirect_url = url_for('index')
     redirect_response = redirect(redirect_url)
     return redirect_response
-
-
-@application.route('/')
-def index():
-    """Landing page."""
-
-    login_form = LoginForm()
-    urls = {
-        'login': url_for('login'),
-        'logout': url_for('logout')
-    }
-
-    output = render_template('index.html', login_form=login_form, urls=urls)
-    return output

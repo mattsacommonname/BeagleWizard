@@ -15,7 +15,7 @@
 from config import config
 from entities import db as database, User as UserEntity
 from flask import Flask
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 from pony.orm import db_session, set_sql_debug
 from uuid import UUID
 
@@ -38,12 +38,28 @@ application.config['SECRET_KEY'] = config.get('secret_key')
 login_manager = LoginManager(application)
 
 
+class LoginUser(UserMixin):
+    def __init__(self, user_entity: UserEntity):
+        self.id = user_entity.id
+        self.name = user_entity.name
+        self.administrator = user_entity.administrator
+
+    def get_entity(self) -> UserEntity:
+        user_entity = UserEntity[self.id]
+        return user_entity
+
+
 @login_manager.user_loader
 def load_user(user_id):
     """User loader."""
     uuid = UUID(user_id)
     with db_session:
-        user = UserEntity[uuid]
+        user_entity = UserEntity[uuid]
+
+        if not user_entity:
+            return None
+
+        user = LoginUser(user_entity)
         return user
 
 

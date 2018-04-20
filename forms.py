@@ -17,6 +17,21 @@ from wtforms import PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Length
 
 
+class AddBookmarkForm(FlaskForm):
+    """Add bookmark form."""
+
+    label = StringField('Label', validators=[DataRequired(), Length(min=1, max=256)])
+    """Bookmark label."""
+
+    url = StringField('URL', validators=[DataRequired(), Length(min=3, max=2048)])
+    """Bookmark URL."""
+
+    text = StringField('Text', validators=[Length(max=4096)])
+    """Text/noted for the bookmark."""
+
+    submit = SubmitField('Add')
+
+
 class LoginForm(FlaskForm):
     """User login form."""
 
