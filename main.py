@@ -17,6 +17,7 @@ from flask import Flask
 from flask_login import (
     LoginManager,
     UserMixin)
+from flask_restful import Api
 from pony.orm import (
     db_session,
     set_sql_debug)
@@ -27,6 +28,11 @@ from config import config
 from entities import (
     db,
     User as UserEntity)
+from rest import (
+    Bookmark as BookmarkResource,
+    BookmarkList as BookmarkListResource,
+    Tag as TagResource,
+    TagList as TagListResource)
 
 
 # application
@@ -39,6 +45,15 @@ app = Flask(__name__)
 db.bind(**config.get('database_bindings', {'provider': 'sqlite', 'filename': ':memory:'}))
 set_sql_debug(config.get('debug_mode', False))
 db.generate_mapping(create_tables=config.get('create_tables', True))
+
+
+# REST api
+
+api = Api(app)
+api.add_resource(BookmarkListResource, '/b')
+api.add_resource(BookmarkResource, '/b/<bookmark_id>')
+api.add_resource(TagListResource, '/t')
+api.add_resource(TagResource, '/t/<tag_id>')
 
 
 # authentication
