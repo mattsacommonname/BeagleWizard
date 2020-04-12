@@ -30,6 +30,7 @@ from flask_login import (
 
 from forms import (
     AddBookmarkForm,
+    AddTagForm,
     LoginForm)
 from main import (
     api as rest_api,
@@ -37,7 +38,9 @@ from main import (
 from pony.orm import (
     db_session,
     select)
-from rest import BookmarkList as BookmarkListResource
+from rest import (
+    BookmarkList as BookmarkListResource,
+    TagList as TagListResource)
 
 
 def get_bookmarks(user):
@@ -61,10 +64,12 @@ def index():
             'bookmarks': get_bookmarks(current_user),
             'forms': {
                 'add_bookmark': AddBookmarkForm(),
+                'add_tag': AddTagForm(),
                 'login_form': LoginForm()},
             'messages': get_flashed_messages(),
             'urls': {
                 'add_bookmark': rest_api.url_for(BookmarkListResource),
+                'add_tag': rest_api.url_for(TagListResource),
                 'login': url_for('login'),
                 'logout': url_for('logout')}}
 

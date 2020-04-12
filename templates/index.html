@@ -34,6 +34,12 @@
         <div>{{ forms.add_bookmark.text(size=32) }}</div>
         <div>{{ forms.add_bookmark.submit() }}</div>
     </form>
+    <form action="{{ urls.add_tag }}" method="post">
+        {{ forms.add_tag.hidden_tag() }}
+        <div>{{ forms.add_tag.label.label }}</div>
+        <div>{{ forms.add_tag.label(size=32) }}</div>
+        <div>{{ forms.add_tag.submit() }}</div>
+    </form>
     <table>
         <thead>
             <tr>

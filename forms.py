@@ -36,6 +36,15 @@ class AddBookmarkForm(FlaskForm):
     submit = SubmitField('Add')
 
 
+class AddTagForm(FlaskForm):
+    """Add tag form."""
+
+    label = StringField('Label', validators=[DataRequired(), Length(min=1, max=256)])
+    """Tag label."""
+
+    submit = SubmitField('Add')
+
+
 class LoginForm(FlaskForm):
     """User login form."""
 

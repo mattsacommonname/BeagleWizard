@@ -29,7 +29,9 @@ from uuid import UUID
 from entities import (
     Bookmark as BookmarkEntity,
     Tag as TagEntity)
-from forms import AddBookmarkForm
+from forms import (
+    AddBookmarkForm,
+    AddTagForm)
 
 
 class LoginRequiredResource(Resource):
@@ -182,4 +184,13 @@ class TagList(LoginRequiredResource):
     def post():
         """Creates a new tag."""
 
-        return {}
+        form = AddTagForm()
+        if not form.validate_on_submit():
+            abort(400)
+
+        with db_session:
+            user = current_user.get_entity()
+            tag = TagEntity(label=form.label.data, user=user)
+
+            output = marshal(tag, tag_fields)
+            return output
