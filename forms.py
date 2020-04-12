@@ -1,4 +1,4 @@
-# Copyright 2018 Matthew Bishop
+# Copyright 2020 Matthew Bishop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,12 @@
 # limitations under the License.
 
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms import (
+    StringField,
+    SubmitField)
+from wtforms.validators import (
+    DataRequired,
+    Length)
 
 
 class AddBookmarkForm(FlaskForm):
@@ -37,9 +41,6 @@ class LoginForm(FlaskForm):
 
     name = StringField('User name', validators=[DataRequired(), Length(min=3, max=32)])
     """User name."""
-
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=128)])
-    """Password."""
 
     submit = SubmitField('Login')
     """Submit button."""

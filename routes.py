@@ -1,4 +1,4 @@
-# Copyright 2018 Matthew Bishop
+# Copyright 2020 Matthew Bishop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from datetime import datetime
-from entities import Bookmark as BookmarkEntity, User as UserEntity
-from flask import flash, get_flashed_messages, redirect, render_template, request, url_for
-from flask_login import current_user, login_user, logout_user
-from forms import AddBookmarkForm, LoginForm
-from main import application
-from pony.orm import db_session, select
-from werkzeug.security import check_password_hash, generate_password_hash
+from entities import (
+    Bookmark as BookmarkEntity,
+    User as UserEntity)
+from flask import (
+    flash,
+    get_flashed_messages,
+    redirect,
+    render_template,
+    request,
+    url_for)
+from flask_login import (
+    current_user,
+    login_user,
+    logout_user)
+from forms import (
+    AddBookmarkForm,
+    LoginForm)
+from main import app
+from pony.orm import (
+    db_session,
+    select)
 
 
-@application.route('/addbookmark', methods=['POST'])
-def addbookmark():
+@app.route('/addbookmark', methods=['POST'])
+def add_bookmark():
     form = AddBookmarkForm()
 
     redirect_url = url_for('index')
@@ -57,7 +72,7 @@ def get_bookmarks(user):
     return bookmarks
 
 
-@application.route('/')
+@app.route('/')
 def index():
     """Landing page."""
 
@@ -77,7 +92,7 @@ def index():
     return output
 
 
-@application.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     """User login processing."""
 
@@ -91,8 +106,6 @@ def login():
         # Form data failed validation, flash error messages to user
         for error in form.name.errors:
             flash('{}: {}'.format(form.name.label.text, error))
-        for error in form.password.errors:
-            flash('{}: {}'.format(form.password.label.text, error))
 
         return redirect_response
 
@@ -101,16 +114,9 @@ def login():
 
         if not user:
             # HACK: User does not exist, register them
-            password = generate_password_hash(form.password.data)
-            user = UserEntity(name=form.name.data, password_hash=password, administrator=True)
+            user = UserEntity(name=form.name.data)
 
             flash('{} registered'.format(user.name))
-
-        elif not check_password_hash(user.password_hash, form.password.data):
-            # User exists, password incorrect
-            flash('Credentials incorrect')
-
-            return redirect_response
 
         # User found, password correct, log 'em in
         login_user(user, remember=True)
@@ -120,7 +126,7 @@ def login():
     return redirect_response
 
 
-@application.route('/logout')
+@app.route('/logout')
 def logout():
     """User logout."""
 

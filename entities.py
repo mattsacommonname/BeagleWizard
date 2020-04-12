@@ -1,4 +1,4 @@
-# Copyright 2018 Matthew Bishop
+# Copyright 2020 Matthew Bishop
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,16 @@
 
 from datetime import datetime
 from flask_login import UserMixin
-from pony.orm import composite_key, Database, Optional, PrimaryKey, Required, Set
-from uuid import UUID, uuid4
+from pony.orm import (
+    composite_key,
+    Database,
+    Optional,
+    PrimaryKey,
+    Required,
+    Set)
+from uuid import (
+    UUID,
+    uuid4)
 
 
 # database
@@ -33,12 +41,6 @@ class User(UserMixin, db.Entity):
 
     name = Required(str, max_len=32, unique=True)
     """Login identifier/username."""
-
-    password_hash = Required(str)
-    """Hash of the salt & user's password."""
-
-    administrator = Required(bool)
-    """Admin user flag."""
 
     bookmarks = Set('Bookmark')
     """Bookmarks relationship."""
