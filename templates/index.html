@@ -24,21 +24,12 @@
     <div>
         {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
     </div>
+    <h2>Bookmarks</h2>
     <form action="{{ urls.add_bookmark }}" method="post">
         {{ forms.add_bookmark.hidden_tag() }}
-        <div>{{ forms.add_bookmark.label.label }}</div>
-        <div>{{ forms.add_bookmark.label(size=32) }}</div>
-        <div>{{ forms.add_bookmark.url.label }}</div>
-        <div>{{ forms.add_bookmark.url(size=32) }}</div>
-        <div>{{ forms.add_bookmark.text.label }}</div>
-        <div>{{ forms.add_bookmark.text(size=32) }}</div>
-        <div>{{ forms.add_bookmark.submit() }}</div>
-    </form>
-    <form action="{{ urls.add_tag }}" method="post">
-        {{ forms.add_tag.hidden_tag() }}
-        <div>{{ forms.add_tag.label.label }}</div>
-        <div>{{ forms.add_tag.label(size=32) }}</div>
-        <div>{{ forms.add_tag.submit() }}</div>
+        <div>{{ forms.add_bookmark.label.label }} {{ forms.add_bookmark.label(size=32) }}</div>
+        <div>{{ forms.add_bookmark.url.label }} {{ forms.add_bookmark.url(size=32) }}</div>
+        <div>{{ forms.add_bookmark.text.label }} {{ forms.add_bookmark.text(size=32) }} {{ forms.add_bookmark.submit() }}</div>
     </form>
     <table>
         <thead>
@@ -47,18 +38,45 @@
                 <td>Words</td>
             </tr>
         </thead>
-        <tbody>
-            {% for bookmark in bookmarks %}
-                <tr>
-                    <td>
-                        <a href="{{ bookmark.url }}">{{ bookmark.label }}</a>
-                    </td>
-                    <td>{{ bookmark.text }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+        <tbody id="bookmark-list"></tbody>
+    </table>
+    <h2>Tags</h2>
+    <form action="{{ urls.add_tag }}" method="post">
+        {{ forms.add_tag.hidden_tag() }}
+        <div>{{ forms.add_tag.label.label }} {{ forms.add_tag.label(size=32) }} {{ forms.add_tag.submit() }}</div>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <td>Tag</td>
+            </tr>
+        </thead>
+        <tbody id="tag-list"></tbody>
     </table>
 {% endif %}
+
+<script id="bookmark-template" type="text/x-handlebars-template">
+    {% raw %}
+        <td>
+            <a href="{{ url }}">{{ label }}</a>
+        </td>
+        <td>{{ text }}</td>
+    {% endraw %}
+</script>
+
+<script id="tag-template" type="text/x-handlebars-template">
+    {% raw %}
+        <td>
+            <a href="">{{ label }}</a>
+        </td>
+    {% endraw %}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.1/handlebars.min.js" integrity="sha256-Mki72593zH3nxiQrW1mskmSOAXOep8FVIK0ozKFISyY=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" integrity="sha256-G7A4JrJjJlFqP0yamznwPjAApIKPkadeHfyIwiaa9e0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js" integrity="sha256-OO+KD/bMG3Dr57LO27ZhYL2zYhLP1CJIkCXUUDnFNuc=" crossorigin="anonymous"></script>
+<script src="/static/scripting.js"></script>
 
 </body>
 </html>
