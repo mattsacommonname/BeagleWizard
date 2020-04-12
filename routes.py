@@ -79,7 +79,7 @@ def index():
     add_bookmark_form = AddBookmarkForm()
     login_form = LoginForm()
     urls = {
-        'addbookmark': url_for('addbookmark'),
+        'add_bookmark': url_for('add_bookmark'),
         'login': url_for('login'),
         'logout': url_for('logout')
     }
