@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-from datetime import datetime
 from entities import (
     Bookmark as BookmarkEntity,
     User as UserEntity)
@@ -28,41 +27,22 @@ from flask_login import (
     current_user,
     login_user,
     logout_user)
+
 from forms import (
     AddBookmarkForm,
     LoginForm)
-from main import app
+from main import (
+    api as rest_api,
+    app)
 from pony.orm import (
     db_session,
     select)
-
-
-@app.route('/addbookmark', methods=['POST'])
-def add_bookmark():
-    form = AddBookmarkForm()
-
-    redirect_url = url_for('index')
-    redirect_response = redirect(redirect_url)
-
-    if not form.validate_on_submit():
-        for error in form.label.errors:
-            flash(f'{form.label.label.text}: {error}')
-        for error in form.url.errors:
-            flash(f'{form.url.label.text}: {error}')
-
-        return redirect_response
-
-    with db_session:
-        user_entity = current_user.get_entity()
-        bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
-                                  created=datetime.utcnow(), modified=datetime.utcnow(), user=user_entity)
-
-        flash(f'Added bookmark "{bookmark.label}"')
-
-    return redirect_response
+from rest import BookmarkList as BookmarkListResource
 
 
 def get_bookmarks(user):
+    """TODO: HACK remove"""
+
     if user is None or not user.is_authenticated:
         return None
 
@@ -76,20 +56,20 @@ def get_bookmarks(user):
 def index():
     """Landing page."""
 
-    add_bookmark_form = AddBookmarkForm()
-    login_form = LoginForm()
-    urls = {
-        'add_bookmark': url_for('add_bookmark'),
-        'login': url_for('login'),
-        'logout': url_for('logout')
-    }
-    messages = get_flashed_messages()
     with db_session:
-        bookmarks = get_bookmarks(current_user)
+        context = {
+            'bookmarks': get_bookmarks(current_user),
+            'forms': {
+                'add_bookmark': AddBookmarkForm(),
+                'login_form': LoginForm()},
+            'messages': get_flashed_messages(),
+            'urls': {
+                'add_bookmark': rest_api.url_for(BookmarkListResource),
+                'login': url_for('login'),
+                'logout': url_for('logout')}}
 
-        output = render_template('index.html', add_bookmark_form=add_bookmark_form, bookmarks=bookmarks,
-                                 login_form=login_form, messages=messages, urls=urls)
-    return output
+        output = render_template('index.html', **context)
+        return output
 
 
 @app.route('/login', methods=['POST'])

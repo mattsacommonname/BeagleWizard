@@ -15,24 +15,24 @@
 
 {% if not current_user.is_authenticated %}
     <form action="{{ urls.login }}" method="post">
-        {{ login_form.hidden_tag() }}
-        <div>{{ login_form.name.label }}</div>
-        <div>{{ login_form.name(size=32) }}</div>
-        <div>{{ login_form.submit() }}</div>
+        {{ forms.login.hidden_tag() }}
+        <div>{{ forms.login.name.label }}</div>
+        <div>{{ forms.login.name(size=32) }}</div>
+        <div>{{ forms.login.submit() }}</div>
     </form>
 {% else %}
     <div>
         {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
     </div>
     <form action="{{ urls.add_bookmark }}" method="post">
-        {{ login_form.hidden_tag() }}
-        <div>{{ add_bookmark_form.label.label }}</div>
-        <div>{{ add_bookmark_form.label(size=32) }}</div>
-        <div>{{ add_bookmark_form.url.label }}</div>
-        <div>{{ add_bookmark_form.url(size=32) }}</div>
-        <div>{{ add_bookmark_form.text.label }}</div>
-        <div>{{ add_bookmark_form.text(size=32) }}</div>
-        <div>{{ add_bookmark_form.submit() }}</div>
+        {{ forms.add_bookmark.hidden_tag() }}
+        <div>{{ forms.add_bookmark.label.label }}</div>
+        <div>{{ forms.add_bookmark.label(size=32) }}</div>
+        <div>{{ forms.add_bookmark.url.label }}</div>
+        <div>{{ forms.add_bookmark.url(size=32) }}</div>
+        <div>{{ forms.add_bookmark.text.label }}</div>
+        <div>{{ forms.add_bookmark.text(size=32) }}</div>
+        <div>{{ forms.add_bookmark.submit() }}</div>
     </form>
     <table>
         <thead>

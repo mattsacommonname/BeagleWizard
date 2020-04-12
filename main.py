@@ -63,11 +63,17 @@ login_manager = LoginManager(app)
 
 
 class LoginUser(UserMixin):
+    """User representation."""
+
     def __init__(self, user_entity: UserEntity):
+        """Constructor."""
+
         self.id = user_entity.id
         self.name = user_entity.name
 
     def get_entity(self) -> UserEntity:
+        """Gets the related database entity."""
+
         user_entity = UserEntity[self.id]
         return user_entity
 
@@ -75,6 +81,7 @@ class LoginUser(UserMixin):
 @login_manager.user_loader
 def load_user(user_id: str) -> Optional[UserMixin]:
     """User loader."""
+
     uuid = UUID(user_id)
     with db_session:
         user_entity = UserEntity[uuid]
