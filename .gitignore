@@ -59,8 +59,8 @@ target/
 # PyCharm
 .idea/
 
-# autoenv
-.env
+# direnv
+.envrc
 
 # SQLite3 database
 *.sqlite3
