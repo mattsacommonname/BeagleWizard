@@ -46,9 +46,9 @@ def add_bookmark():
 
     if not form.validate_on_submit():
         for error in form.label.errors:
-            flash('{}: {}'.format(form.label.label.text, error))
+            flash(f'{form.label.label.text}: {error}')
         for error in form.url.errors:
-            flash('{}: {}'.format(form.url.label.text, error))
+            flash(f'{form.url.label.text}: {error}')
 
         return redirect_response
 
@@ -57,7 +57,7 @@ def add_bookmark():
         bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
                                   created=datetime.utcnow(), modified=datetime.utcnow(), user=user_entity)
 
-        flash('Added bookmark "{}"'.format(bookmark.label))
+        flash(f'Added bookmark "{bookmark.label}"')
 
     return redirect_response
 
@@ -105,7 +105,7 @@ def login():
     if not form.validate_on_submit():
         # Form data failed validation, flash error messages to user
         for error in form.name.errors:
-            flash('{}: {}'.format(form.name.label.text, error))
+            flash('{form.name.label.text}: {error}')
 
         return redirect_response
 
@@ -116,12 +116,12 @@ def login():
             # HACK: User does not exist, register them
             user = UserEntity(name=form.name.data)
 
-            flash('{} registered'.format(user.name))
+            flash(f'{user.name} registered')
 
         # User found, password correct, log 'em in
         login_user(user, remember=True)
 
-        flash('{} logged on'.format(user.name))
+        flash(f'{user.name} logged on')
 
     return redirect_response
 
