@@ -14,7 +14,6 @@
 
 
 from entities import (
-    Bookmark as BookmarkEntity,
     User as UserEntity)
 from flask import (
     flash,
@@ -24,7 +23,6 @@ from flask import (
     request,
     url_for)
 from flask_login import (
-    current_user,
     login_user,
     logout_user)
 
@@ -35,24 +33,10 @@ from forms import (
 from main import (
     api as rest_api,
     app)
-from pony.orm import (
-    db_session,
-    select)
+from pony.orm import db_session
 from rest import (
     BookmarkList as BookmarkListResource,
     TagList as TagListResource)
-
-
-def get_bookmarks(user):
-    """TODO: HACK remove"""
-
-    if user is None or not user.is_authenticated:
-        return None
-
-    user_entity = user.get_entity()
-    bookmarks = select(b for b in BookmarkEntity if b.user == user_entity)
-
-    return bookmarks
 
 
 @app.route('/')
@@ -61,7 +45,6 @@ def index():
 
     with db_session:
         context = {
-            'bookmarks': get_bookmarks(current_user),
             'forms': {
                 'add_bookmark': AddBookmarkForm(),
                 'add_tag': AddTagForm(),
