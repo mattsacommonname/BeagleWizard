@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Beagle Wizard</title>
+    <link href="/static/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -27,9 +28,15 @@
     <h2>Bookmarks</h2>
     <form action="{{ urls.add_bookmark }}" method="post">
         {{ forms.add_bookmark.hidden_tag() }}
-        <div>{{ forms.add_bookmark.label.label }} {{ forms.add_bookmark.label(size=32) }}</div>
-        <div>{{ forms.add_bookmark.url.label }} {{ forms.add_bookmark.url(size=32) }}</div>
-        <div>{{ forms.add_bookmark.text.label }} {{ forms.add_bookmark.text(size=32) }} {{ forms.add_bookmark.submit() }}</div>
+        <div>
+            {{ forms.add_bookmark.label.label }}
+            {{ forms.add_bookmark.label(size=32) }}
+            {{ forms.add_bookmark.url.label }}
+            {{ forms.add_bookmark.url(size=32) }}
+            {{ forms.add_bookmark.text.label }}
+            {{ forms.add_bookmark.text(size=32) }}
+            {{ forms.add_bookmark.submit() }}
+        </div>
     </form>
     <table>
         <thead>
