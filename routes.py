@@ -48,7 +48,7 @@ def index():
             'forms': {
                 'add_bookmark': AddBookmarkForm(),
                 'add_tag': AddTagForm(),
-                'login_form': LoginForm()},
+                'login': LoginForm()},
             'messages': get_flashed_messages(),
             'urls': {
                 'add_bookmark': rest_api.url_for(BookmarkListResource),
