@@ -49,13 +49,10 @@ class LoginRequiredResource(Resource):
 class Bookmark(LoginRequiredResource):
     """Represents an individual bookmark REST resource."""
 
-    def __init__(self):
-        """Constructor."""
+    _schema = BookmarkSchema()
 
-        super().__init__()
-        self._schema = BookmarkSchema()
-
-    def _get_bookmark(self, bookmark_id):
+    @classmethod
+    def _get_bookmark(cls, bookmark_id):
         """Gets a REST appropriate output formatted bookmark from an ID."""
 
         try:
@@ -68,28 +65,31 @@ class Bookmark(LoginRequiredResource):
         except ObjectNotFound as ex:
             abort(404)
 
-        output = self._schema.dump(bookmark)
+        output = cls._schema.dump(bookmark)
         return output
 
-    def get(self, bookmark_id):
+    @classmethod
+    def get(cls, bookmark_id):
         """Gets a bookmark."""
 
         with db_session:
-            output = self._get_bookmark(bookmark_id)
+            output = cls._get_bookmark(bookmark_id)
             return output
 
-    def patch(self, bookmark_id):
+    @classmethod
+    def patch(cls, bookmark_id):
         """Partially updates a bookmark."""
 
         with db_session:
-            output = self._get_bookmark(bookmark_id)
+            output = cls._get_bookmark(bookmark_id)
             return output
 
-    def put(self, bookmark_id):
+    @classmethod
+    def put(cls, bookmark_id):
         """Updates a bookmark."""
 
         with db_session:
-            output = self._get_bookmark(bookmark_id)
+            output = cls._get_bookmark(bookmark_id)
             return output
 
 
@@ -121,8 +121,8 @@ class BookmarkList(LoginRequiredResource):
 
     _name_field_map: dict = {field.name: field for field in _sortable_fields}
 
-    @staticmethod
-    def _order_by(field_name: str):
+    @classmethod
+    def _order_by(cls, field_name: str):
         """Builds the value to order the bookmark list query by.
 
         :param field_name: Name of the field to sort on.
@@ -133,9 +133,9 @@ class BookmarkList(LoginRequiredResource):
         if field_name is None:
             raise ValueError('field_name cannot be None')
 
-        descending = field_name.startswith(BookmarkList._SORT_REVERSE_INDICATOR)
-        name = field_name.strip(BookmarkList._SORT_REVERSE_INDICATOR)
-        field = BookmarkList._name_field_map.get(name, None)
+        descending = field_name.startswith(cls._SORT_REVERSE_INDICATOR)
+        name = field_name.strip(cls._SORT_REVERSE_INDICATOR)
+        field = cls._name_field_map.get(name, None)
         if field is None:  # not a valid field to order by
             raise ValueError(f'"{field_name}" is not a valid field to sort by')
 
@@ -143,8 +143,8 @@ class BookmarkList(LoginRequiredResource):
             return desc(field)
         return field
 
-    @staticmethod
-    def _selector(tag: TagEntity) -> Callable:
+    @classmethod
+    def _selector(cls, tag: TagEntity) -> Callable:
         """Build selection filter for bookmark list query.
 
         :param tag: The tag id attached to filter on.
@@ -157,40 +157,39 @@ class BookmarkList(LoginRequiredResource):
 
         return lambda bookmark: tag in bookmark.tags
 
-    @staticmethod
-    def get():
+    @classmethod
+    def get(cls):
         f"""Gets the list of bookmarks.
         
         URL query keys:
         
-        - {BookmarkList._OFFSET_KEY}: Offset to begin at. Value must be non-negative. Defaults to
-          {BookmarkList._OFFSET_DEFAULT}.
-        - {BookmarkList._LIMIT_KEY}: Maximum number of results to return. Value must be positive. Defaults to
-          {BookmarkList._LIMIT_DEFAULT}
-        - {BookmarkList._SORT_KEY}: Field to sort on. Must be a value in
-          {BookmarkList._name_field_map.keys()}. Can be prefixed with {BookmarkList._SORT_REVERSE_INDICATOR} to reverse
-          the order. Defaults to {BookmarkList._SORT_DEFAULT}
-        - {BookmarkList._TAG_KEY}: ID of a tag to filter on."""
+        - {cls._OFFSET_KEY}: Offset to begin at. Value must be non-negative. Defaults to {cls._OFFSET_DEFAULT}.
+        - {cls._LIMIT_KEY}: Maximum number of results to return. Value must be positive. Defaults to
+          {cls._LIMIT_DEFAULT}
+        - {cls._SORT_KEY}: Field to sort on. Must be a value in {cls._name_field_map.keys()}. Can be prefixed with
+          {cls._SORT_REVERSE_INDICATOR} to reverse the order. Defaults to {cls._SORT_DEFAULT}
+        - {cls._TAG_KEY}: ID of a tag to filter on.
+        """
 
         try:
-            offset = int(request.args.get(BookmarkList._OFFSET_KEY, BookmarkList._OFFSET_DEFAULT))
-            if offset < BookmarkList._OFFSET_MIN:
-                raise ValueError(f'offset of "{offset}" less than minimum "{BookmarkList._OFFSET_MIN}"')
+            offset = int(request.args.get(cls._OFFSET_KEY, cls._OFFSET_DEFAULT))
+            if offset < cls._OFFSET_MIN:
+                raise ValueError(f'offset of "{offset}" less than minimum "{cls._OFFSET_MIN}"')
         except (TypeError, ValueError) as ex:
             abort(400)
 
         try:
-            limit = int(request.args.get(BookmarkList._LIMIT_KEY, BookmarkList._LIMIT_DEFAULT))
-            if limit < BookmarkList._LIMIT_MIN:
-                raise ValueError(f'limit of "{limit}" is less than minimum "{BookmarkList._LIMIT_MIN}"')
-            if limit > BookmarkList._LIMIT_MAX:
-                raise ValueError(f'limit of "{limit}" is greater than maximum "{BookmarkList._LIMIT_MAX}"')
+            limit = int(request.args.get(cls._LIMIT_KEY, cls._LIMIT_DEFAULT))
+            if limit < cls._LIMIT_MIN:
+                raise ValueError(f'limit of "{limit}" is less than minimum "{cls._LIMIT_MIN}"')
+            if limit > cls._LIMIT_MAX:
+                raise ValueError(f'limit of "{limit}" is greater than maximum "{cls._LIMIT_MAX}"')
         except (TypeError, ValueError) as ex:
             abort(400)
 
         end = offset + limit
 
-        tag_id = request.args.get(BookmarkList._TAG_KEY, None)
+        tag_id = request.args.get(cls._TAG_KEY, None)
         try:
             tag_uuid = UUID(tag_id) if tag_id else None
         except (AttributeError, TypeError, ValueError) as ex:
@@ -202,22 +201,22 @@ class BookmarkList(LoginRequiredResource):
             except ObjectNotFound as ex:
                 abort(400)
 
-            selector = BookmarkList._selector(tag)
+            selector = cls._selector(tag)
 
-            sort = request.args.get(BookmarkList._SORT_KEY, BookmarkList._SORT_DEFAULT)
+            sort = request.args.get(cls._SORT_KEY, cls._SORT_DEFAULT)
 
             try:
-                order_by = BookmarkList._order_by(sort)
+                order_by = cls._order_by(sort)
             except ValueError as ex:
                 abort(400)
 
             user = current_user.get_entity()
             bookmarks = [bookmark for bookmark in user.bookmarks.select(selector).order_by(order_by)[offset:end]]
-            output = BookmarkList._schema.dump(bookmarks, many=True)
+            output = cls._schema.dump(bookmarks, many=True)
             return output
 
-    @staticmethod
-    def post():
+    @classmethod
+    def post(cls):
         """Creates a new bookmark."""
 
         form = AddBookmarkForm()
@@ -229,20 +228,17 @@ class BookmarkList(LoginRequiredResource):
             bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
                                       created=datetime.utcnow(), modified=datetime.utcnow(), user=user)
 
-            output = BookmarkList._schema.dump(bookmark)
+            output = cls._schema.dump(bookmark)
             return output
 
 
 class Tag(LoginRequiredResource):
     """Represents an individual tag REST resource."""
 
-    def __init__(self):
-        """Constructor."""
+    _schema = TagSchema()
 
-        super().__init__()
-        self._schema = TagSchema()
-
-    def _get_tag(self, tag_id):
+    @classmethod
+    def _get_tag(cls, tag_id):
         """Gets a REST appropriate output formatted tag from an ID."""
 
         try:
@@ -255,43 +251,43 @@ class Tag(LoginRequiredResource):
         except ObjectNotFound as ex:
             abort(404)
 
-        output = self._schema.dump(tag)
+        output = cls._schema.dump(tag)
         return output
 
-    def get(self, tag_id):
+    @classmethod
+    def get(cls, tag_id):
         """Gets a tag."""
 
         with db_session:
-            output = self._get_tag(tag_id)
+            output = cls._get_tag(tag_id)
             return output
 
-    def put(self, tag_id):
+    @classmethod
+    def put(cls, tag_id):
         """Updates a tag."""
 
         with db_session:
-            output = self._get_tag(tag_id)
+            output = cls._get_tag(tag_id)
             return output
 
 
 class TagList(LoginRequiredResource):
     """Represents a list of tags REST resource."""
 
-    def __init__(self):
-        """Constructor."""
+    _schema = TagSchema()
 
-        super().__init__()
-        self._schema = TagSchema()
-
-    def get(self):
+    @classmethod
+    def get(cls):
         """Gets the list of tags."""
 
         with db_session:
             user = current_user.get_entity()
             tags = list(user.tags)
-            output = self._schema.dump(tags, many=True)
+            output = cls._schema.dump(tags, many=True)
             return output
 
-    def post(self):
+    @classmethod
+    def post(cls):
         """Creates a new tag."""
 
         form = AddTagForm()
@@ -302,5 +298,5 @@ class TagList(LoginRequiredResource):
             user = current_user.get_entity()
             tag = TagEntity(label=form.label.data, user=user)
 
-            output = self._schema.dump(tag)
+            output = cls._schema.dump(tag)
             return output
