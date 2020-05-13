@@ -80,17 +80,13 @@ class Bookmark(LoginRequiredResource):
     def patch(cls, bookmark_id):
         """Partially updates a bookmark."""
 
-        with db_session:
-            output = cls._get_bookmark(bookmark_id)
-            return output
+        abort(501)
 
     @classmethod
     def put(cls, bookmark_id):
         """Updates a bookmark."""
 
-        with db_session:
-            output = cls._get_bookmark(bookmark_id)
-            return output
+        abort(501)
 
 
 class BookmarkList(LoginRequiredResource):
@@ -266,9 +262,7 @@ class Tag(LoginRequiredResource):
     def put(cls, tag_id):
         """Updates a tag."""
 
-        with db_session:
-            output = cls._get_tag(tag_id)
-            return output
+        abort(501)
 
 
 class TagList(LoginRequiredResource):
