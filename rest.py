@@ -14,13 +14,19 @@
 
 
 from datetime import datetime
-from flask import abort
+from flask import (
+    abort,
+    request)
 from flask_login import (
     current_user,
     login_required)
 from flask_restful import Resource
-from pony.orm import db_session
+from pony.orm import (
+    db_session,
+    desc,
+    ObjectNotFound)
 from pony.orm.core import ObjectNotFound
+from typing import Callable
 from uuid import UUID
 
 from entities import (
@@ -90,22 +96,128 @@ class Bookmark(LoginRequiredResource):
 class BookmarkList(LoginRequiredResource):
     """Represents a list of bookmarks REST resource."""
 
-    def __init__(self):
-        """Constructor."""
+    _LIMIT_DEFAULT: int = 200
+    _LIMIT_KEY: str = 'l'
+    _LIMIT_MAX: int = 1000
+    _LIMIT_MIN: int = 1
 
-        super().__init__()
-        self._schema = BookmarkSchema()
+    _OFFSET_DEFAULT: int = 0
+    _OFFSET_KEY: str = 'o'
+    _OFFSET_MIN: int = 0
 
-    def get(self):
-        """Gets the list of bookmarks."""
+    _SORT_DEFAULT: str = BookmarkEntity.modified.name
+    _SORT_KEY: str = 's'
+    _SORT_REVERSE_INDICATOR: str = '-'
+
+    _TAG_KEY: str = 't'
+
+    _schema: BookmarkSchema = BookmarkSchema()
+
+    _sortable_fields: list = [
+        BookmarkEntity.created,
+        BookmarkEntity.label,
+        BookmarkEntity.modified,
+        BookmarkEntity.url]
+
+    _name_field_map: dict = {field.name: field for field in _sortable_fields}
+
+    @staticmethod
+    def _order_by(field_name: str):
+        """Builds the value to order the bookmark list query by.
+
+        :param field_name: Name of the field to sort on.
+
+        :return: A valid sortable value.
+        """
+
+        if field_name is None:
+            raise ValueError('field_name cannot be None')
+
+        descending = field_name.startswith(BookmarkList._SORT_REVERSE_INDICATOR)
+        name = field_name.strip(BookmarkList._SORT_REVERSE_INDICATOR)
+        field = BookmarkList._name_field_map.get(name, None)
+        if field is None:  # not a valid field to order by
+            raise ValueError(f'"{field_name}" is not a valid field to sort by')
+
+        if descending:
+            return desc(field)
+        return field
+
+    @staticmethod
+    def _selector(tag: TagEntity) -> Callable:
+        """Build selection filter for bookmark list query.
+
+        :param tag: The tag id attached to filter on.
+
+        :return: The selector function.
+        """
+
+        if tag is None:
+            return lambda bookmark: True
+
+        return lambda bookmark: tag in bookmark.tags
+
+    @staticmethod
+    def get():
+        f"""Gets the list of bookmarks.
+        
+        URL query keys:
+        
+        - {BookmarkList._OFFSET_KEY}: Offset to begin at. Value must be non-negative. Defaults to
+          {BookmarkList._OFFSET_DEFAULT}.
+        - {BookmarkList._LIMIT_KEY}: Maximum number of results to return. Value must be positive. Defaults to
+          {BookmarkList._LIMIT_DEFAULT}
+        - {BookmarkList._SORT_KEY}: Field to sort on. Must be a value in
+          {BookmarkList._name_field_map.keys()}. Can be prefixed with {BookmarkList._SORT_REVERSE_INDICATOR} to reverse
+          the order. Defaults to {BookmarkList._SORT_DEFAULT}
+        - {BookmarkList._TAG_KEY}: ID of a tag to filter on."""
+
+        try:
+            offset = int(request.args.get(BookmarkList._OFFSET_KEY, BookmarkList._OFFSET_DEFAULT))
+            if offset < BookmarkList._OFFSET_MIN:
+                raise ValueError(f'offset of "{offset}" less than minimum "{BookmarkList._OFFSET_MIN}"')
+        except (TypeError, ValueError) as ex:
+            abort(400)
+
+        try:
+            limit = int(request.args.get(BookmarkList._LIMIT_KEY, BookmarkList._LIMIT_DEFAULT))
+            if limit < BookmarkList._LIMIT_MIN:
+                raise ValueError(f'limit of "{limit}" is less than minimum "{BookmarkList._LIMIT_MIN}"')
+            if limit > BookmarkList._LIMIT_MAX:
+                raise ValueError(f'limit of "{limit}" is greater than maximum "{BookmarkList._LIMIT_MAX}"')
+        except (TypeError, ValueError) as ex:
+            abort(400)
+
+        end = offset + limit
+
+        tag_id = request.args.get(BookmarkList._TAG_KEY, None)
+        try:
+            tag_uuid = UUID(tag_id) if tag_id else None
+        except (AttributeError, TypeError, ValueError) as ex:
+            abort(400)
 
         with db_session:
+            try:
+                tag = TagEntity[tag_uuid] if tag_uuid else None
+            except ObjectNotFound as ex:
+                abort(400)
+
+            selector = BookmarkList._selector(tag)
+
+            sort = request.args.get(BookmarkList._SORT_KEY, BookmarkList._SORT_DEFAULT)
+
+            try:
+                order_by = BookmarkList._order_by(sort)
+            except ValueError as ex:
+                abort(400)
+
             user = current_user.get_entity()
-            bookmarks = [bookmark for bookmark in user.bookmarks]
-            output = self._schema.dump(bookmarks, many=True)
+            bookmarks = [bookmark for bookmark in user.bookmarks.select(selector).order_by(order_by)[offset:end]]
+            output = BookmarkList._schema.dump(bookmarks, many=True)
             return output
 
-    def post(self):
+    @staticmethod
+    def post():
         """Creates a new bookmark."""
 
         form = AddBookmarkForm()
@@ -117,7 +229,7 @@ class BookmarkList(LoginRequiredResource):
             bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
                                       created=datetime.utcnow(), modified=datetime.utcnow(), user=user)
 
-            output = self._schema.dump(bookmark)
+            output = BookmarkList._schema.dump(bookmark)
             return output
 
 
