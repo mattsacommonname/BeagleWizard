@@ -64,6 +64,18 @@ var BookmarkView = Backbone.View.extend({
         let output = BookmarkTemplate(context);
         this.$el.html(output);
         $(`#delete-${bookmarkId}`).click(this, function (e) { e.data.deleteClick(e); });
+        let tagCell = $(`#tags-${bookmarkId}`);
+        let tags = this.model.get('tags');
+        for (tag of tags) {
+            let bookmark_tag_model = new BookmarkTagModel({
+                bookmark_id: bookmarkId,
+                id: tag.id,
+                label: tag.label
+            });
+            let bookmark_tag_view = new BookmarkTagView({ model: bookmark_tag_model });
+            tagCell.append(bookmark_tag_view.$el);
+            bookmark_tag_view.render();
+        }
         return this;
     }
 });
@@ -99,6 +111,25 @@ var BookmarkListView = Backbone.View.extend({
                 options.view.render();
             }
         });
+    }
+});
+
+var BookmarkTagTemplate = Handlebars.compile($('#bookmark-tag-template').html());
+
+var BookmarkTagModel = Backbone.Model.extend({});
+
+var BookmarkTagView = Backbone.View.extend({
+    model: BookmarkTagModel,
+    tagName: 'span',
+    render: function() {
+        let context = {
+            bookmark_id: this.model.get('bookmark_id'),
+            id: this.model.get('id'),
+            label: this.model.get('label')
+        };
+        let output = BookmarkTagTemplate(context);
+        this.$el.html(output);
+        return this;
     }
 });
 

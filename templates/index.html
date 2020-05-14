@@ -42,6 +42,7 @@
             <tr>
                 <td>Link</td>
                 <td>Words</td>
+                <td>Tags</td>
                 <td></td>
             </tr>
         </thead>
@@ -72,9 +73,17 @@
             <a href="{{ url }}">{{ label }}</a>
         </td>
         <td>{{ text }}</td>
+        <td id="tags-{{ id }}"></td>
         <td>
             <button id="delete-{{ id }}" type="button">x</button>
         </td>
+    {% endraw %}
+</script>
+
+<script id="bookmark-tag-template" type="text/x-handlebars-template">
+    {% raw %}
+        {{ label }}
+        <button id="delete-{{ id }}" type="button">x</button>
     {% endraw %}
 </script>
 
