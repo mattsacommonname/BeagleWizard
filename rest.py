@@ -69,6 +69,35 @@ class Bookmark(LoginRequiredResource):
         return output
 
     @classmethod
+    def delete(cls, bookmark_id):
+        """Deletes a bookmark.
+
+        :param bookmark_id: ID of the bookmark to delete.
+
+        :return: An HTTP response:
+                 - If the delete was successful: 200 and a JSON representation of the deleted bookmark.
+                 - If bookmark_id was invalid (i.e. not a valid UUID): 400
+                 - If the bookmark didn't exist: 404
+        """
+
+        try:
+            uuid = UUID(bookmark_id)
+        except ValueError as ex:
+            abort(400)
+
+        with db_session:
+            try:
+                bookmark = BookmarkEntity[uuid]
+            except ObjectNotFound as ex:
+                abort(404)
+
+            output = cls._schema.dump(bookmark)
+
+            bookmark.delete()
+
+            return output
+
+    @classmethod
     def get(cls, bookmark_id):
         """Gets a bookmark."""
 
@@ -249,6 +278,34 @@ class Tag(LoginRequiredResource):
 
         output = cls._schema.dump(tag)
         return output
+
+    @classmethod
+    def delete(cls, tag_id):
+        """Deletes a tag.
+
+        :param tag_id: ID of the tag to delete.
+        :return: An HTTP response:
+                 - If successful: 200 and a JSON representation of the deleted tag.
+                 - If the tag is invalid (i.e., cannot be made into a UUID): 400
+                 - If the tag doesn't exist: 404
+        """
+
+        try:
+            uuid = UUID(tag_id)
+        except ValueError as ex:
+            abort(400)
+
+        with db_session:
+            try:
+                tag = TagEntity[uuid]
+            except ObjectNotFound as ex:
+                abort(404)
+
+            output = cls._schema.dump(tag)
+
+            tag.delete()
+
+            return output
 
     @classmethod
     def get(cls, tag_id):

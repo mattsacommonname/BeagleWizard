@@ -27,21 +27,56 @@ var BookmarkCollection = Backbone.Collection.extend({
 var BookmarkView = Backbone.View.extend({
     model: BookmarkModel,
     tagName: 'tr',
+
+    /**
+     * Deletes the bookmark represented by the current model.
+     *
+     * @param {jQuery.Event} e The jQuery click event. Contains the model in data.
+     */
+    deleteClick: function(e) {
+        bookmarkId = this.model.get('id');
+        $.ajax({
+            context: this,
+            type: 'DELETE',
+            url: `/b/${bookmarkId}`,
+            error: function(request, status, err) {
+                console.error(`error deleting bookmark ${bookmarkId}: ${err}`);
+            },
+            success: function(data, status, request) {
+                console.log(`bookmark ${bookmarkId} deleted`);
+                this.remove();
+            }
+        });
+    },
+
+    /**
+     * Renders the bookmark to the row element it's been assigned.
+     *
+     * @returns {BookmarkView} The current BookmarkView.
+     */
     render: function() {
+        let bookmarkId = this.model.get('id');
         let context = {
-            id: this.model.get('id'),
+            id: bookmarkId,
             label: this.model.get('label'),
             text: this.model.get('text'),
             url: this.model.get('url')
         };
         let output = BookmarkTemplate(context);
         this.$el.html(output);
+        $(`#delete-${bookmarkId}`).click(this, function (e) { e.data.deleteClick(e); });
         return this;
     }
 });
 
 var BookmarkListView = Backbone.View.extend({
     model: BookmarkCollection,
+
+    /**
+     * Renders a list of bookmarks to the assigned element.
+     *
+     * @returns {BookmarkListView} This BookmarkListView.
+     */
     render: function() {
         for (bookmark of this.model) {
             let bookmark_view = new BookmarkView({model: bookmark});
@@ -49,6 +84,21 @@ var BookmarkListView = Backbone.View.extend({
             bookmark_view.render();
         }
         return this;
+    },
+
+    /**
+     * Updates the list view by fetching the collection and rendering it.
+     */
+    update: function() {
+        this.model.fetch({
+            view: this,
+
+            /**
+             */
+            success: function(collection, response, options) {
+                options.view.render();
+            }
+        });
     }
 });
 
@@ -64,19 +114,54 @@ var TagCollection = Backbone.Collection.extend({
 var TagView = Backbone.View.extend({
     model: TagModel,
     tagName: 'tr',
+
+    /**
+     * Deletes the tag represented by the model.
+     *
+     * @param {jQuery.Event} e Click event. Contains the model in data.
+     */
+    clickDelete: function(e) {
+        tagId = this.model.get('id');
+        $.ajax({
+            context: this,
+            type: 'DELETE',
+            url: `/t/${tagId}`,
+            error: function(request, status, err) {
+                console.error(`error deleting tag ${tagId}: ${err}`);
+            },
+            success: function(data, status, request) {
+                console.info(`tag ${tagId} deleted`);
+                this.remove();
+            }
+        });
+    },
+
+    /**
+     * Renders the tag to the assigned element.
+     *
+     * @returns {TagView} This TagView.
+     */
     render: function() {
+        let tagId = this.model.get('id');
         let context = {
-            id: this.model.get('id'),
+            id: tagId,
             label: this.model.get('label'),
         };
         let output = TagTemplate(context);
         this.$el.html(output);
+        $(`#delete-${tagId}`).click(this, function (e) { e.data.clickDelete(e); });
         return this;
     }
 });
 
 var TagListView = Backbone.View.extend({
     model: TagCollection,
+
+    /**
+     * Renders the collection of tags.
+     *
+     * @returns {TagListView} This TagListView.
+     */
     render: function() {
         for (tag of this.model) {
             let tag_view = new TagView({model: tag});
@@ -84,11 +169,26 @@ var TagListView = Backbone.View.extend({
             tag_view.render();
         }
         return this;
+    },
+
+    /**
+     * Updates the list view by fetching the collection and rendering it.
+     */
+    update: function() {
+        this.model.fetch({
+            view: this,
+
+            /**
+             */
+            success: function(collection, response, options) {
+                options.view.render();
+            }
+        });
     }
 });
 
 // perform logic that needs the DOM to have finished loading
-$(document).ready(function(){
+$(document).ready(function() {
     var bookmarks = new BookmarkCollection();
 
     var bookmarks_view = new BookmarkListView({
@@ -96,11 +196,7 @@ $(document).ready(function(){
         model: bookmarks
     });
 
-    bookmarks.fetch({
-        success: function(collection, response, options) {
-            bookmarks_view.render();
-        }
-    });
+    bookmarks_view.update();
 
     var tags = new TagCollection();
 
@@ -109,11 +205,7 @@ $(document).ready(function(){
         model: tags
     });
 
-    tags.fetch({
-        success: function(collection, response, options) {
-            tags_view.render();
-        }
-    });
+    tags_view.update();
 });
 
 })();

@@ -43,6 +43,7 @@
             <tr>
                 <td>Link</td>
                 <td>Words</td>
+                <td></td>
             </tr>
         </thead>
         <tbody id="bookmark-list"></tbody>
@@ -56,6 +57,7 @@
         <thead>
             <tr>
                 <td>Tag</td>
+                <td></td>
             </tr>
         </thead>
         <tbody id="tag-list"></tbody>
@@ -68,6 +70,9 @@
             <a href="{{ url }}">{{ label }}</a>
         </td>
         <td>{{ text }}</td>
+        <td>
+            <button id="delete-{{ id }}" type="button">x</button>
+        </td>
     {% endraw %}
 </script>
 
@@ -75,6 +80,9 @@
     {% raw %}
         <td>
             <a href="/t/{{ id }}">{{ label }}</a>
+        </td>
+        <td>
+            <button id="delete-{{ id }}" type="button">x</button>
         </td>
     {% endraw %}
 </script>
