@@ -26,8 +26,7 @@
         {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
     </div>
     <h2>Bookmarks</h2>
-    <form action="{{ urls.add_bookmark }}" method="post">
-        {{ forms.add_bookmark.hidden_tag() }}
+    <form>
         <div>
             {{ forms.add_bookmark.label.label }}
             {{ forms.add_bookmark.label(size=32) }}
@@ -35,7 +34,7 @@
             {{ forms.add_bookmark.url(size=32) }}
             {{ forms.add_bookmark.text.label }}
             {{ forms.add_bookmark.text(size=32) }}
-            {{ forms.add_bookmark.submit() }}
+            <button id="bookmark-add" type="button">Add</button>
         </div>
     </form>
     <table>
@@ -49,9 +48,12 @@
         <tbody id="bookmark-list"></tbody>
     </table>
     <h2>Tags</h2>
-    <form action="{{ urls.add_tag }}" method="post">
-        {{ forms.add_tag.hidden_tag() }}
-        <div>{{ forms.add_tag.label.label }} {{ forms.add_tag.label(size=32) }} {{ forms.add_tag.submit() }}</div>
+    <form>
+        <div>
+            {{ forms.add_tag.label.label }}
+            {{ forms.add_tag.label(size=32) }}
+            <button id="tag-add" type="button">Add</button>
+        </div>
     </form>
     <table>
         <thead>

@@ -24,25 +24,25 @@ from wtforms.validators import (
 class AddBookmarkForm(FlaskForm):
     """Add bookmark form."""
 
-    label = StringField('Label', validators=[DataRequired(), Length(min=1, max=256)])
+    label = StringField('Label', id='bookmark-label', validators=[DataRequired(), Length(min=1, max=256)])
     """Bookmark label."""
 
-    url = StringField('URL', validators=[DataRequired(), Length(min=3, max=2048)])
+    url = StringField('URL', id='bookmark-url', validators=[DataRequired(), Length(min=3, max=2048)])
     """Bookmark URL."""
 
-    text = StringField('Text', validators=[Length(max=4096)])
+    text = StringField('Text', id='bookmark-text', validators=[Length(max=4096)])
     """Text/noted for the bookmark."""
 
-    submit = SubmitField('Add')
+    submit = SubmitField('Add', id='bookmark-add')
 
 
 class AddTagForm(FlaskForm):
     """Add tag form."""
 
-    label = StringField('Label', validators=[DataRequired(), Length(min=1, max=256)])
+    label = StringField('Label', id='tag-label', validators=[DataRequired(), Length(min=1, max=256)])
     """Tag label."""
 
-    submit = SubmitField('Add')
+    submit = SubmitField('Add', id='tag-add')
 
 
 class LoginForm(FlaskForm):

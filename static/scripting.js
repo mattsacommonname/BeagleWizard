@@ -43,7 +43,6 @@ var BookmarkView = Backbone.View.extend({
                 console.error(`error deleting bookmark ${bookmarkId}: ${err}`);
             },
             success: function(data, status, request) {
-                console.log(`bookmark ${bookmarkId} deleted`);
                 this.remove();
             }
         });
@@ -78,6 +77,7 @@ var BookmarkListView = Backbone.View.extend({
      * @returns {BookmarkListView} This BookmarkListView.
      */
     render: function() {
+        this.$el.html('');
         for (bookmark of this.model) {
             let bookmark_view = new BookmarkView({model: bookmark});
             this.$el.append(bookmark_view.$el);
@@ -130,7 +130,6 @@ var TagView = Backbone.View.extend({
                 console.error(`error deleting tag ${tagId}: ${err}`);
             },
             success: function(data, status, request) {
-                console.info(`tag ${tagId} deleted`);
                 this.remove();
             }
         });
@@ -163,6 +162,7 @@ var TagListView = Backbone.View.extend({
      * @returns {TagListView} This TagListView.
      */
     render: function() {
+        this.$el.html('');
         for (tag of this.model) {
             let tag_view = new TagView({model: tag});
             this.$el.append(tag_view.$el);
@@ -206,6 +206,44 @@ $(document).ready(function() {
     });
 
     tags_view.update();
+
+    $('#bookmark-add').click(function(e) {
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                label: $('#bookmark-label').val(),
+                text: $('#bookmark-text').val(),
+                url: $('#bookmark-url').val()
+            }),
+            dataType: "json",
+            type: 'POST',
+            url: '/b',
+            error: function(request, status, err) {
+                console.error(`error adding bookmark: ${err}`);
+            },
+            success: function(data, status, request) {
+                bookmarks.add(data, {at: 0});
+                bookmarks_view.render();
+            }
+        });
+    });
+    $('#tag-add').click(function(e) {
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                label: $('#tag-label').val()
+            }),
+            dataType: "json",
+            type: 'POST',
+            url: '/t',
+            error: function(request, status, err) {
+                console.error(`error adding tag: ${err}`);
+            },
+            success: function(data, status, request) {
+                tags_view.render();
+            }
+        });
+    });
 });
 
 })();

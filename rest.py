@@ -21,6 +21,7 @@ from flask_login import (
     current_user,
     login_required)
 from flask_restful import Resource
+from marshmallow import ValidationError
 from pony.orm import (
     db_session,
     desc,
@@ -244,13 +245,14 @@ class BookmarkList(LoginRequiredResource):
     def post(cls):
         """Creates a new bookmark."""
 
-        form = AddBookmarkForm()
-        if not form.validate_on_submit():
+        try:
+            data = cls._schema.load(request.json)
+        except ValidationError as ex:
             abort(400)
 
         with db_session:
             user = current_user.get_entity()
-            bookmark = BookmarkEntity(label=form.label.data, url=form.url.data, text=form.text.data,
+            bookmark = BookmarkEntity(label=data['label'], url=data['url'], text=data['text'],
                                       created=datetime.utcnow(), modified=datetime.utcnow(), user=user)
 
             output = cls._schema.dump(bookmark)
@@ -341,13 +343,14 @@ class TagList(LoginRequiredResource):
     def post(cls):
         """Creates a new tag."""
 
-        form = AddTagForm()
-        if not form.validate_on_submit():
+        try:
+            data = cls._schema.load(request.json)
+        except ValidationError as ex:
             abort(400)
 
         with db_session:
             user = current_user.get_entity()
-            tag = TagEntity(label=form.label.data, user=user)
+            tag = TagEntity(label=data['label'], user=user)
 
             output = cls._schema.dump(tag)
             return output
