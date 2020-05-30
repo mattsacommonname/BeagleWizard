@@ -17,7 +17,6 @@ from flask import Flask
 from flask_login import (
     LoginManager,
     UserMixin)
-from flask_restful import Api
 from pony.orm import (
     db_session,
     set_sql_debug)
@@ -49,11 +48,10 @@ db.generate_mapping(create_tables=config.get('create_tables', True))
 
 # REST api
 
-api = Api(app)
-api.add_resource(BookmarkListResource, '/b')
-api.add_resource(BookmarkResource, '/b/<bookmark_id>')
-api.add_resource(TagListResource, '/t')
-api.add_resource(TagResource, '/t/<tag_id>')
+app.add_url_rule('/b', view_func=BookmarkListResource.as_view('bookmark_list'))
+app.add_url_rule('/b/<bookmark_id>', view_func=BookmarkResource.as_view('bookmark'))
+app.add_url_rule('/t', view_func=TagListResource.as_view('tag_list'))
+app.add_url_rule('/t/<tag_id>', view_func=TagResource.as_view('tag'))
 
 
 # authentication

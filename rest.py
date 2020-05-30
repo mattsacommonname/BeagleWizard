@@ -16,11 +16,13 @@
 from datetime import datetime
 from flask import (
     abort,
-    request)
+    request,
+    Response)
+from flask.views import MethodView
 from flask_login import (
     current_user,
     login_required)
-from flask_restful import Resource
+from functools import wraps
 from marshmallow import ValidationError
 from pony.orm import (
     db_session,
@@ -41,13 +43,32 @@ from schemas import (
     Tag as TagSchema)
 
 
-class LoginRequiredResource(Resource):
+def make_json_response(func):
+    """Decorator to that will turn non Response results into Response object with an 'applicatoin/json' mime type.
+
+    :param func: The function to decorate.
+
+    :return: The decorated function.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if isinstance(result, Response):
+            return result
+
+        return Response(result, 200, mimetype='application/json')
+
+    return wrapper
+
+
+class RestResource(MethodView):
     """Base class for REST resources so that they require a login."""
 
-    method_decorators = [login_required]
+    decorators = [make_json_response, login_required]
 
 
-class Bookmark(LoginRequiredResource):
+class Bookmark(RestResource):
     """Represents an individual bookmark REST resource."""
 
     _schema = BookmarkSchema()
@@ -66,7 +87,7 @@ class Bookmark(LoginRequiredResource):
         except ObjectNotFound as ex:
             abort(404)
 
-        output = cls._schema.dump(bookmark)
+        output = cls._schema.dumps(bookmark)
         return output
 
     @classmethod
@@ -92,7 +113,7 @@ class Bookmark(LoginRequiredResource):
             except ObjectNotFound as ex:
                 abort(404)
 
-            output = cls._schema.dump(bookmark)
+            output = cls._schema.dumps(bookmark)
 
             bookmark.delete()
 
@@ -119,7 +140,7 @@ class Bookmark(LoginRequiredResource):
         abort(501)
 
 
-class BookmarkList(LoginRequiredResource):
+class BookmarkList(RestResource):
     """Represents a list of bookmarks REST resource."""
 
     _LIMIT_DEFAULT: int = 200
@@ -238,7 +259,8 @@ class BookmarkList(LoginRequiredResource):
 
             user = current_user.get_entity()
             bookmarks = [bookmark for bookmark in user.bookmarks.select(selector).order_by(order_by)[offset:end]]
-            output = cls._schema.dump(bookmarks, many=True)
+            output = cls._schema.dumps(bookmarks, many=True)
+
             return output
 
     @classmethod
@@ -255,11 +277,11 @@ class BookmarkList(LoginRequiredResource):
             bookmark = BookmarkEntity(label=data['label'], url=data['url'], text=data['text'],
                                       created=datetime.utcnow(), modified=datetime.utcnow(), user=user)
 
-            output = cls._schema.dump(bookmark)
+            output = cls._schema.dumps(bookmark)
             return output
 
 
-class Tag(LoginRequiredResource):
+class Tag(RestResource):
     """Represents an individual tag REST resource."""
 
     _schema = TagSchema()
@@ -278,7 +300,7 @@ class Tag(LoginRequiredResource):
         except ObjectNotFound as ex:
             abort(404)
 
-        output = cls._schema.dump(tag)
+        output = cls._schema.dumps(tag)
         return output
 
     @classmethod
@@ -303,7 +325,7 @@ class Tag(LoginRequiredResource):
             except ObjectNotFound as ex:
                 abort(404)
 
-            output = cls._schema.dump(tag)
+            output = cls._schema.dumps(tag)
 
             tag.delete()
 
@@ -324,7 +346,7 @@ class Tag(LoginRequiredResource):
         abort(501)
 
 
-class TagList(LoginRequiredResource):
+class TagList(RestResource):
     """Represents a list of tags REST resource."""
 
     _schema = TagSchema()
@@ -336,7 +358,7 @@ class TagList(LoginRequiredResource):
         with db_session:
             user = current_user.get_entity()
             tags = list(user.tags)
-            output = cls._schema.dump(tags, many=True)
+            output = cls._schema.dumps(tags, many=True)
             return output
 
     @classmethod
@@ -352,5 +374,5 @@ class TagList(LoginRequiredResource):
             user = current_user.get_entity()
             tag = TagEntity(label=data['label'], user=user)
 
-            output = cls._schema.dump(tag)
+            output = cls._schema.dumps(tag)
             return output

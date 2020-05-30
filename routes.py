@@ -30,9 +30,7 @@ from forms import (
     AddBookmarkForm,
     AddTagForm,
     LoginForm)
-from main import (
-    api as rest_api,
-    app)
+from main import app
 from pony.orm import db_session
 from rest import (
     BookmarkList as BookmarkListResource,
@@ -51,8 +49,8 @@ def index():
                 'login': LoginForm()},
             'messages': get_flashed_messages(),
             'urls': {
-                'add_bookmark': rest_api.url_for(BookmarkListResource),
-                'add_tag': rest_api.url_for(TagListResource),
+                'add_bookmark': url_for('bookmark_list'),
+                'add_tag': url_for('tag_list'),
                 'login': url_for('login'),
                 'logout': url_for('logout')}}
 
