@@ -32,9 +32,6 @@ from forms import (
     LoginForm)
 from main import app
 from pony.orm import db_session
-from rest import (
-    BookmarkList as BookmarkListResource,
-    TagList as TagListResource)
 
 
 @app.route('/')

@@ -28,16 +28,12 @@ from pony.orm import (
     db_session,
     desc,
     ObjectNotFound)
-from pony.orm.core import ObjectNotFound
 from typing import Callable
 from uuid import UUID
 
 from entities import (
     Bookmark as BookmarkEntity,
     Tag as TagEntity)
-from forms import (
-    AddBookmarkForm,
-    AddTagForm)
 from schemas import (
     Bookmark as BookmarkSchema,
     Tag as TagSchema)
