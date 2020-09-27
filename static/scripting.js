@@ -15,7 +15,7 @@
 
 (function(){
 
-var BookmarkTemplate = Handlebars.compile($('#bookmark-template').html());
+var BookmarkTemplate = _.template($('#bookmark-template').html());
 
 var BookmarkModel = Backbone.Model.extend({urlRoot: '/b'});
 
@@ -114,7 +114,7 @@ var BookmarkListView = Backbone.View.extend({
     }
 });
 
-var BookmarkTagTemplate = Handlebars.compile($('#bookmark-tag-template').html());
+var BookmarkTagTemplate = _.template($('#bookmark-tag-template').html());
 
 var BookmarkTagModel = Backbone.Model.extend({});
 
@@ -133,7 +133,7 @@ var BookmarkTagView = Backbone.View.extend({
     }
 });
 
-var TagTemplate = Handlebars.compile($('#tag-template').html());
+var TagTemplate = _.template($('#tag-template').html());
 
 var TagModel = Backbone.Model.extend({urlRoot: '/t'});
 
