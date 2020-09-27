@@ -5,67 +5,152 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Beagle Wizard</title>
-    <link href="/static/style.css" rel="stylesheet">
+    <link href="http://localhost:8000/fontawesome-free-5.14.0-web/css/all.css" crossorigin="anonymous" integrity="sha384-2u5nxrarE67xPTypS69k1tpTaYbAYZFApdwSbK4AnaNcmMWDf+b0GgCHRQaPPP17" rel="stylesheet">
+    <link href="http://localhost:8000/bulmaswatch-darkly-0.8.1.min.css" crossorigin="anonymous" integrity="sha384-8lDxaFUSY2k04pcvbaw/ylpiGVb/Y5bfNwGM8wHY0BWNcxH6qGy85xNSxO225LzY" rel="stylesheet">
 </head>
 <body>
 
+<!-- notifications -->
+
 {% set messages = get_flashed_messages() %}
 {% for message in messages %}
-    <div>{{ message }}</div>
+    <div class="notification">{{ message }}</div>
 {% endfor %}
 
 {% if not current_user.is_authenticated %}
-    <form action="{{ urls.login }}" method="post">
-        {{ forms.login.hidden_tag() }}
-        <div>{{ forms.login.name.label }}</div>
-        <div>{{ forms.login.name(size=32) }}</div>
-        <div>{{ forms.login.submit() }}</div>
-    </form>
-{% else %}
-    <div>
-        {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+
+<!-- login -->
+
+<form action="{{ urls.login }}" method="post">
+    {{ forms.login.hidden_tag() }}
+    <div class="field">
+        {{ forms.login.name.label(class_='label') }}
+        <div class="control">
+            {{ forms.login.name(class_='input') }}
+        </div>
     </div>
-    <h2>Bookmarks</h2>
-    <form>
-        <div>
-            {{ forms.add_bookmark.label.label }}
-            {{ forms.add_bookmark.label(size=32) }}
-            {{ forms.add_bookmark.url.label }}
-            {{ forms.add_bookmark.url(size=32) }}
-            {{ forms.add_bookmark.text.label }}
-            {{ forms.add_bookmark.text(size=32) }}
-            <button id="bookmark-add" type="button">Add</button>
+    <div class="field">
+        <div class="control">
+            {{ forms.login.submit(class_='button') }}
         </div>
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <td>Link</td>
-                <td>Words</td>
-                <td>Tags</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody id="bookmark-list"></tbody>
-    </table>
-    <h2>Tags</h2>
-    <form>
-        <div>
-            {{ forms.add_tag.label.label }}
-            {{ forms.add_tag.label(size=32) }}
-            <button id="tag-add" type="button">Add</button>
+    </div>
+</form>
+
+{% else %}
+
+<!-- header -->
+
+<section class="section">
+<div class="container">
+    {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+
+    <h1 class="is-1 title">Beagle Wizard</h1>
+</div>
+</section>
+
+<!-- bookmarks -->
+
+<section>
+<div class="container">
+
+<h2 class="is-2 subtitle">Bookmarks</h2>
+<form>
+    <div class="field is-grouped">
+        <div class="control">
+            {{ forms.add_bookmark.label.label(class_='is-large label') }}
         </div>
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <td>Tag</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody id="tag-list"></tbody>
-    </table>
+        <div class="control has-icons-left">
+            {{ forms.add_bookmark.label(class_='input') }}
+            <span class="icon is-small is-left">
+                <i class="fas fa-bookmark"></i>
+            </span>
+        </div>
+        <div class="control">
+            {{ forms.add_bookmark.url.label(class_='is-large label') }}
+        </div>
+        <div class="control has-icons-left">
+            {{ forms.add_bookmark.url(class_='input') }}
+            <span class="icon is-small is-left">
+                <i class="fas fa-external-link-alt"></i>
+            </span>
+        </div>
+        <div class="control">
+            {{ forms.add_bookmark.text.label(class_='is-large label') }}
+        </div>
+        <div class="control has-icons-left">
+            {{ forms.add_bookmark.text(class_='input') }}
+            <span class="icon is-small is-left">
+                <i class="fas fa-align-left"></i>
+            </span>
+        </div>
+        <div class="control">
+            <button id="bookmark-add" class="button" type="button">Add</button>
+        </div>
+    </div>
+</form>
+
+<table class="is-narrow is-striped table">
+    <thead>
+        <tr>
+            <td>Link</td>
+            <td>Words</td>
+            <td>Tags</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody id="bookmark-list"></tbody>
+</table>
+
+</div>
+</section>
+
+<!-- tags -->
+
+<section>
+<div class="container">
+
+<h2 class="is-2 subtitle">Tags</h2>
+
+<form>
+    <div class="field is-grouped">
+        <div class="control">
+            {{ forms.add_tag.label.label(class_='is-large label') }}
+        </div>
+        <div class="control has-icons-left">
+            {{ forms.add_tag.label(class_='input') }}
+            <span class="icon is-small is-left">
+                <i class="fas fa-tag"></i>
+            </span>
+        </div>
+        <div class="control">
+            <button id="tag-add" class="button" type="button">Add</button>
+        </div>
+    </div>
+</form>
+
+<table class="is-narrow is-striped table">
+    <thead>
+        <tr>
+            <td>Tag</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody id="tag-list"></tbody>
+</table>
+
+</div>
+</section>
 {% endif %}
+
+<!-- footer -->
+
+<footer class="footer">
+    <div class="content has-text-centered">
+        <p>Diagnostic info, I guess?</p>
+    </div>
+</footer>
+
+<!-- templates -->
 
 <script id="bookmark-template" type="text/x-handlebars-template">
     {% raw %}
@@ -75,15 +160,17 @@
         <td>{{ text }}</td>
         <td id="tags-{{ id }}"></td>
         <td>
-            <button id="delete-{{ id }}" type="button">x</button>
+            <button id="delete-{{ id }}" class="delete" type="button">x</button>
         </td>
     {% endraw %}
 </script>
 
 <script id="bookmark-tag-template" type="text/x-handlebars-template">
     {% raw %}
-        {{ label }}
-        <button id="delete-{{ id }}" type="button">x</button>
+        <span class="tag">
+            {{ label }}
+            <button id="delete-{{ id }}" class="delete is-small" type="button">x</button>
+        </span>
     {% endraw %}
 </script>
 
@@ -93,10 +180,12 @@
             <a href="/t/{{ id }}">{{ label }}</a>
         </td>
         <td>
-            <button id="delete-{{ id }}" type="button">x</button>
+            <button id="delete-{{ id }}" class="delete" type="button">x</button>
         </td>
     {% endraw %}
 </script>
+
+<!-- scripts -->
 
 <script defer src="http://localhost:8000/jquery-3.5.1.js" crossorigin="anonymous" integrity="sha384-/LjQZzcpTzaYn7qWqRIWYC5l8FWEZ2bIHIz0D73Uzba4pShEcdLdZyZkI4Kv676E"></script>
 <script defer src="http://localhost:8000/handlebars-v4.7.6.js" crossorigin="anonymous" integrity="sha384-ZBjbLpkFg3p7nRvR+SIhq1JPzKvnCaGumcLPckMQbA+p4iHXWCcN8mfig+sM/Dop"></script>
