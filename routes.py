@@ -21,10 +21,12 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_from_directory,
     url_for)
 from flask_login import (
     login_user,
     logout_user)
+from os.path import join
 
 from forms import (
     AddBookmarkForm,
@@ -32,6 +34,15 @@ from forms import (
     LoginForm)
 from main import app
 from pony.orm import db_session
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Favicon.
+
+    Note: this should probably be done by the server itself, not by the app."""
+
+    return send_from_directory(join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/')
