@@ -43,48 +43,41 @@
 <section class="section">
 <div class="container">
     {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
-
-    <h1 class="is-1 title">Beagle Wizard</h1>
 </div>
 </section>
 
-<!-- bookmarks -->
-
 <section>
 <div class="container">
+<div class="columns">
 
-<h2 class="is-2 subtitle">Bookmarks</h2>
+<div class="column is-three-quarters">
+
+<!-- bookmarks -->
+
 <form>
-    <div class="field is-grouped">
-        <div class="control">
-            {{ forms.add_bookmark.label.label(class_='is-large label') }}
-        </div>
+    <div class="field has-addons">
         <div class="control has-icons-left">
-            {{ forms.add_bookmark.label(class_='input') }}
+            {{ forms.add_bookmark.label(class_='input', placeholder='Bookmark label') }}
             <span class="icon is-small is-left">
                 <i class="fas fa-bookmark"></i>
             </span>
         </div>
-        <div class="control">
-            {{ forms.add_bookmark.url.label(class_='is-large label') }}
-        </div>
         <div class="control has-icons-left">
-            {{ forms.add_bookmark.url(class_='input') }}
+            {{ forms.add_bookmark.url(class_='input', placeholder='URL') }}
             <span class="icon is-small is-left">
                 <i class="fas fa-external-link-alt"></i>
             </span>
         </div>
-        <div class="control">
-            {{ forms.add_bookmark.text.label(class_='is-large label') }}
-        </div>
         <div class="control has-icons-left">
-            {{ forms.add_bookmark.text(class_='input') }}
+            {{ forms.add_bookmark.text(class_='input', placeholder='Description') }}
             <span class="icon is-small is-left">
                 <i class="fas fa-sticky-note"></i>
             </span>
         </div>
         <div class="control">
-            <button id="bookmark-add" class="button" type="button">Add</button>
+            <button id="bookmark-add" class="button" type="button">
+                <i class="fas fa-plus" title="Add tag"></i>
+            </button>
         </div>
     </div>
 </form>
@@ -102,28 +95,22 @@
 </table>
 
 </div>
-</section>
+<div class="column is-one-quarter">
 
 <!-- tags -->
 
-<section>
-<div class="container">
-
-<h2 class="is-2 subtitle">Tags</h2>
-
 <form>
-    <div class="field is-grouped">
-        <div class="control">
-            {{ forms.add_tag.label.label(class_='is-large label') }}
-        </div>
+    <div class="field has-addons">
         <div class="control has-icons-left">
-            {{ forms.add_tag.label(class_='input') }}
+            {{ forms.add_tag.label(class_='input', placeholder='Tag label') }}
             <span class="icon is-small is-left">
                 <i class="fas fa-tag"></i>
             </span>
         </div>
         <div class="control">
-            <button id="tag-add" class="button" type="button">Add</button>
+            <button id="tag-add" class="button" type="button">
+                <i class="fas fa-plus" title="Add tag"></i>
+            </button>
         </div>
     </div>
 </form>
@@ -139,7 +126,11 @@
 </table>
 
 </div>
+
+</div>
+</div>
 </section>
+
 {% endif %}
 
 <!-- footer -->
@@ -152,7 +143,7 @@
 
 <!-- templates -->
 
-<script id="bookmark-template" type="text/x-handlebars-template">
+<script id="bookmark-template" type="text/template">
     <td>
         <a href="<%= url %>"><%= label %></a>
     </td>
@@ -163,14 +154,14 @@
     </td>
 </script>
 
-<script id="bookmark-tag-template" type="text/x-handlebars-template">
+<script id="bookmark-tag-template" type="text/template">
     <span class="tag">
         <%= label %>
         <button id="delete-<%= id %>" class="delete is-small" type="button">x</button>
     </span>
 </script>
 
-<script id="tag-template" type="text/x-handlebars-template">
+<script id="tag-template" type="text/template">
     <td>
         <a href="/t/<%= id %>"><%= label %></a>
     </td>
