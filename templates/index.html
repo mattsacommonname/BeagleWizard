@@ -139,7 +139,10 @@
 
 <script id="bookmark-template" type="text/template">
     <td>
-        <a href="<%= url %>"><%= label %></a>
+        <a href="<%= url %>" target="_blank">
+            <%= label %>
+            <i class="fas fa-external-link-alt"></i>
+        </a>
     </td>
     <td><%= text %></td>
     <td id="tags-<%= id %>">
