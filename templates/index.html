@@ -82,17 +82,7 @@
     </div>
 </form>
 
-<table class="is-narrow is-striped table">
-    <thead>
-        <tr>
-            <td>Link</td>
-            <td>Words</td>
-            <td>Tags</td>
-            <td></td>
-        </tr>
-    </thead>
-    <tbody id="bookmark-list"></tbody>
-</table>
+<div id="bookmark-list"></div>
 
 </div>
 <div class="column is-one-quarter">
@@ -115,15 +105,7 @@
     </div>
 </form>
 
-<table class="is-narrow is-striped table">
-    <thead>
-        <tr>
-            <td>Tag</td>
-            <td></td>
-        </tr>
-    </thead>
-    <tbody id="tag-list"></tbody>
-</table>
+<div id="tag-list"></div>
 
 </div>
 
@@ -143,22 +125,44 @@
 
 <!-- templates -->
 
+<script id="bookmark-table-template" type="text/template">
+    <thead>
+        <tr>
+            <td>Link</td>
+            <td>Words</td>
+            <td>Tags</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</script>
+
 <script id="bookmark-template" type="text/template">
     <td>
         <a href="<%= url %>"><%= label %></a>
     </td>
     <td><%= text %></td>
-    <td id="tags-<%= id %>"></td>
+    <td id="tags-<%= id %>">
+        <% _.each(tags, function(tag) { %>
+            <span class="tag">
+                <%= tag.label %>
+                <button id="delete-<%= tag.id %>" class="delete is-small" type="button">x</button>
+            </span>
+        <% }); %>
+    </td>
     <td>
         <button id="delete-<%= id %>" class="delete" type="button">x</button>
     </td>
 </script>
 
-<script id="bookmark-tag-template" type="text/template">
-    <span class="tag">
-        <%= label %>
-        <button id="delete-<%= id %>" class="delete is-small" type="button">x</button>
-    </span>
+<script id="tag-table-template" type="text/template">
+    <thead>
+        <tr>
+            <td>Tag</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody></tbody>
 </script>
 
 <script id="tag-template" type="text/template">
@@ -175,6 +179,8 @@
 <script defer src="http://localhost:8000/jquery-3.5.1.js" crossorigin="anonymous" integrity="sha384-/LjQZzcpTzaYn7qWqRIWYC5l8FWEZ2bIHIz0D73Uzba4pShEcdLdZyZkI4Kv676E"></script>
 <script defer src="http://localhost:8000/underscore-1.10.2.js" crossorigin="anonymous" integrity="sha384-/QQLKwe4iK6y3VuoTgrApMXZmDkYApTkPc+Xuea/O+iyWj1xMX6pqNtgMGsR/a1i"></script>
 <script defer src="http://localhost:8000/backbone-1.4.0.js" crossorigin="anonymous" integrity="sha384-nhWt56PME93S1JQLa+kxZkVkAPQAVXJ2QFp2upRdyHKS83dOhoiHLwkiWMcLjmPc"></script>
+<script defer src="http://localhost:8000/backbone.radio-v2.0.0.js" crossorigin="anonymous" integrity="sha384-asKSs9di8STRVbTNegrxOrlfDkv3kIaXmtK/FoUOG1ZL/fZ8+2B3B/YFsIHbGhL7"></script>
+<script defer src="http://localhost:8000/backbone.marionette-v1.8.8.js" crossorigin="anonymous" integrity="sha384-WSEzdcPxfZkqBx9920DgBjzBc5CZMHTFV0aTF20xiQptpDLIgmPJSCPU2AHFe5dO"></script>
 <script defer src="/static/scripting.js"></script>
 
 </body>
