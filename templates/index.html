@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="has-navbar-fixed-top" lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,7 @@
     <title>Beagle Wizard</title>
     <link href="http://localhost:8000/fontawesome-free-5.14.0-web/css/all.css" crossorigin="anonymous" integrity="sha384-2u5nxrarE67xPTypS69k1tpTaYbAYZFApdwSbK4AnaNcmMWDf+b0GgCHRQaPPP17" rel="stylesheet">
     <link href="http://localhost:8000/bulmaswatch-darkly-0.8.1.min.css" crossorigin="anonymous" integrity="sha384-8lDxaFUSY2k04pcvbaw/ylpiGVb/Y5bfNwGM8wHY0BWNcxH6qGy85xNSxO225LzY" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -42,7 +43,42 @@
 
 <section class="section">
 <div class="container">
-    {{ current_user.name }} | <a href="{{ urls.logout }}">logout</a>
+
+<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <div class="navbar-item">
+            Beagle Wizard
+        </div>
+    </div>
+    <div class="navbar-menu">
+        <div class="navbar-start"></div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <span class="icon">
+                    <i class="fas fa-user"></i>
+                </span>
+                <span>{{ current_user.name }}</span>
+            </div>
+            <div class="navbar-item">
+                <a href="#" class="button">
+                    <span class="icon">
+                        <i class="fas fa-cogs"></i>
+                    </span>
+                    <span>settings</span>
+                </a>
+            </div>
+            <div class="navbar-item">
+                <a href="{{ urls.logout }}" class="button">
+                    <span class="icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                    <span>logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
 </div>
 </section>
 
@@ -50,62 +86,66 @@
 <div class="container">
 <div class="columns">
 
-<div class="column is-three-quarters">
+<div class="column is-four-fifths">
 
 <!-- bookmarks -->
 
-<form>
-    <div class="field has-addons">
-        <div class="control has-icons-left">
-            {{ forms.add_bookmark.label(class_='input', placeholder='Bookmark label') }}
-            <span class="icon is-small is-left">
-                <i class="fas fa-bookmark"></i>
-            </span>
+<div class="block">
+    <form>
+        <div class="field has-addons">
+            <div class="control has-icons-left">
+                {{ forms.add_bookmark.label(class_='input', placeholder='Bookmark label') }}
+                <span class="icon is-small is-left">
+                    <i class="fas fa-bookmark"></i>
+                </span>
+            </div>
+            <div class="control has-icons-left">
+                {{ forms.add_bookmark.url(class_='input', placeholder='URL') }}
+                <span class="icon is-small is-left">
+                    <i class="fas fa-external-link-alt"></i>
+                </span>
+            </div>
+            <div class="control has-icons-left">
+                {{ forms.add_bookmark.text(class_='input', placeholder='Description') }}
+                <span class="icon is-small is-left">
+                    <i class="fas fa-sticky-note"></i>
+                </span>
+            </div>
+            <div class="control">
+                <button id="bookmark-add" class="button" type="button">
+                    <i class="fas fa-plus" title="Add tag"></i>
+                </button>
+            </div>
         </div>
-        <div class="control has-icons-left">
-            {{ forms.add_bookmark.url(class_='input', placeholder='URL') }}
-            <span class="icon is-small is-left">
-                <i class="fas fa-external-link-alt"></i>
-            </span>
-        </div>
-        <div class="control has-icons-left">
-            {{ forms.add_bookmark.text(class_='input', placeholder='Description') }}
-            <span class="icon is-small is-left">
-                <i class="fas fa-sticky-note"></i>
-            </span>
-        </div>
-        <div class="control">
-            <button id="bookmark-add" class="button" type="button">
-                <i class="fas fa-plus" title="Add tag"></i>
-            </button>
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 
-<div id="bookmark-list"></div>
+<div id="bookmark-list" class="block"></div>
 
 </div>
-<div class="column is-one-quarter">
+<div class="column is-one-fifth">
 
 <!-- tags -->
 
-<form>
-    <div class="field has-addons">
-        <div class="control has-icons-left">
-            {{ forms.add_tag.label(class_='input', placeholder='Tag label') }}
-            <span class="icon is-small is-left">
-                <i class="fas fa-tag"></i>
-            </span>
+<div class="block">
+    <form>
+        <div class="field has-addons">
+            <div class="control has-icons-left">
+                {{ forms.add_tag.label(class_='input', placeholder='Tag label') }}
+                <span class="icon is-small is-left">
+                    <i class="fas fa-tag"></i>
+                </span>
+            </div>
+            <div class="control">
+                <button id="tag-add" class="button" type="button">
+                    <i class="fas fa-plus" title="Add tag"></i>
+                </button>
+            </div>
         </div>
-        <div class="control">
-            <button id="tag-add" class="button" type="button">
-                <i class="fas fa-plus" title="Add tag"></i>
-            </button>
-        </div>
-    </div>
-</form>
+    </form>
+</div>
 
-<div id="tag-list"></div>
+<div id="tag-list" class="block"></div>
 
 </div>
 
@@ -128,41 +168,45 @@
 <script id="bookmark-table-template" type="text/template">
     <thead>
         <tr>
-            <td>Link</td>
-            <td>Words</td>
-            <td>Tags</td>
-            <td></td>
+            <th>Link</th>
+            <th>Words</th>
+            <th>Tags</th>
+            <th></th>
         </tr>
     </thead>
     <tbody></tbody>
 </script>
 
 <script id="bookmark-template" type="text/template">
-    <td>
+    <td class="is-nowrap">
         <a href="<%= url %>" target="_blank">
             <%= label %>
             <i class="fas fa-external-link-alt"></i>
         </a>
     </td>
     <td><%= text %></td>
-    <td id="tags-<%= id %>">
+    <td>
+        <div class="is-nowrap">
         <% _.each(tags, function(tag) { %>
             <span class="tag">
                 <%= tag.label %>
                 <button id="delete-<%= tag.id %>" class="delete is-small" type="button">x</button>
             </span>
         <% }); %>
+        </div>
     </td>
-    <td>
-        <button id="delete-<%= id %>" class="delete" type="button">x</button>
+    <td class="is-nowrap">
+        <span class="icon is-small">
+            <i class="fas fa-edit"></i>
+        </span>
     </td>
 </script>
 
 <script id="tag-table-template" type="text/template">
     <thead>
         <tr>
-            <td>Tag</td>
-            <td></td>
+            <th>Tag</th>
+            <th></th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -173,7 +217,9 @@
         <a href="/t/<%= id %>"><%= label %></a>
     </td>
     <td>
-        <button id="delete-<%= id %>" class="delete" type="button">x</button>
+        <span class="icon is-small">
+            <i class="fas fa-edit"></i>
+        </span>
     </td>
 </script>
 
