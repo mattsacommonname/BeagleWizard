@@ -133,7 +133,15 @@ class Bookmark(RestResource):
     def put(cls, bookmark_id):
         """Updates a bookmark."""
 
-        abort(501)
+        data = cls._schema.load(request.json)
+        with db_session:
+            bookmark = BookmarkEntity[UUID(bookmark_id)]
+            bookmark.label = data['label']
+            bookmark.text = data['text']
+            bookmark.url = data['url']
+
+            output = cls._schema.dumps(bookmark)
+            return output
 
 
 class BookmarkList(RestResource):
@@ -339,7 +347,13 @@ class Tag(RestResource):
     def put(cls, tag_id):
         """Updates a tag."""
 
-        abort(501)
+        data = cls._schema.load(request.json)
+        with db_session:
+            tag = TagEntity[UUID(tag_id)]
+            tag.label = data['label']
+
+            output = cls._schema.dumps(tag)
+            return output
 
 
 class TagList(RestResource):

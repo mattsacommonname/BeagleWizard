@@ -178,13 +178,32 @@
 </script>
 
 <script id="bookmark-template" type="text/template">
-    <td class="is-nowrap">
-        <a href="<%= url %>" target="_blank">
-            <%= label %>
-            <i class="fas fa-external-link-alt"></i>
-        </a>
+    <td>
+        <span class="display-element is-nowrap">
+            <a href="<%= url %>" target="_blank">
+                <%= label %>
+                <i class="fas fa-external-link-alt"></i>
+            </a>
+        </span>
+        <span class="edit-element is-hidden">
+            <div class="control">
+                <input class="bookmark-edit-label input" value="<%= label %>">
+            </div>
+            <div class="control">
+                <input class="bookmark-edit-url input" value="<%= url %>">
+            </div>
+        </span>
     </td>
-    <td><%= text %></td>
+    <td>
+        <span class="display-element">
+            <%= text %>
+        </span>
+        <span class="edit-element is-hidden">
+            <div class="control">
+                <textarea class="bookmark-edit-text is-expanded textarea"><%= text %></textarea>
+            </div>
+        </span>
+    </td>
     <td>
         <div class="is-nowrap">
         <% _.each(tags, function(tag) { %>
@@ -195,9 +214,19 @@
         <% }); %>
         </div>
     </td>
-    <td class="is-nowrap">
-        <span class="icon is-small">
-            <i class="fas fa-edit"></i>
+    <td>
+        <span class="display-element is-nowrap">
+            <span class="icon is-nowrap is-small" title="edit bookmark">
+                <i class="edit-button fas fa-edit"></i>
+            </span>
+        </span>
+        <span class="edit-element is-hidden is-nowrap">
+            <span class="icon is-small" title="save changes">
+                <i class="save-button fas fa-check-circle"></i>
+            </span>
+            <span class="icon is-small" title="cancel">
+                <i class="cancel-button fas fa-times-circle"></i>
+            </span>
         </span>
     </td>
 </script>
@@ -214,11 +243,28 @@
 
 <script id="tag-template" type="text/template">
     <td>
-        <a href="/t/<%= id %>"><%= label %></a>
+        <span class="display-element is-nowrap">
+            <a href="/t/<%= id %>"><%= label %></a>
+        </span>
+        <span class="edit-element is-hidden">
+            <div class="control">
+                <input class="tag-edit-label" value="<%= label %>">
+            </div>
+        </span>
     </td>
     <td>
-        <span class="icon is-small">
-            <i class="fas fa-edit"></i>
+        <span class="display-element is-nowrap">
+            <span class="icon is-nowrap is-small" title="edit tag">
+                <i class="edit-button fas fa-edit"></i>
+            </span>
+        </span>
+        <span class="edit-element is-hidden is-nowrap">
+            <span class="icon is-small" title="save changes">
+                <i class="save-button fas fa-check-circle"></i>
+            </span>
+            <span class="icon is-small" title="cancel">
+                <i class="cancel-button fas fa-times-circle"></i>
+            </span>
         </span>
     </td>
 </script>

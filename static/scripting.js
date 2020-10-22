@@ -21,6 +21,7 @@ var BeagleWizard = {};
 
 
 (function(){
+
 /**
  * Application
  */
@@ -63,8 +64,47 @@ BeagleWizard.BookmarkCollection = Backbone.Collection.extend({
  *
  */
 BeagleWizard.BookmarkView = Backbone.Marionette.ItemView.extend({
-    template: "#bookmark-template",
-    tagName: 'tr'
+    events: {
+        'click .cancel-button': 'cancelEdit',
+        'click .edit-button': 'editMode',
+        'click .save-button': 'saveChanges'
+    },
+    tagName: 'tr',
+    template: '#bookmark-template',
+    ui: {
+        display_elements: '.display-element',
+        edit_elements: '.edit-element',
+        edit_label: '.bookmark-edit-label',
+        edit_text: '.bookmark-edit-text',
+        edit_url: '.bookmark-edit-url'
+    },
+
+    cancelEdit: function(e){
+        this.ui.edit_label.val(this.model.get('label'));
+        this.ui.edit_text.val(this.model.get('text'));
+        this.ui.edit_url.val(this.model.get('url'));
+        this.ui.display_elements.removeClass('is-hidden');
+        this.ui.edit_elements.addClass('is-hidden');
+        this.render();
+    },
+
+    editMode: function(e){
+        this.ui.display_elements.addClass('is-hidden');
+        this.ui.edit_elements.removeClass('is-hidden');
+    },
+
+    saveChanges: function(e){
+        let updates = {
+            'label': this.ui.edit_label.val(),
+            'text': this.ui.edit_text.val(),
+            'url': this.ui.edit_url.val()
+        };
+        this.model.set(updates);
+        this.model.save();
+        this.ui.display_elements.removeClass('is-hidden');
+        this.ui.edit_elements.addClass('is-hidden');
+        this.render();
+    }
 });
 
 
@@ -72,11 +112,11 @@ BeagleWizard.BookmarkView = Backbone.Marionette.ItemView.extend({
  *
  */
 BeagleWizard.BookmarkTableView = Backbone.Marionette.CompositeView.extend({
-    tagName: "table",
     id: "bookmark-table",
-    className: 'is-narrow is-striped table',
-    template: "#bookmark-table-template",
+    className: 'is-narrow is-striped is-fullwidth table',
     itemView: BeagleWizard.BookmarkView,
+    tagName: "table",
+    template: "#bookmark-table-template",
 
     initialize: function(){
         this.listenTo(this.collection, "sort", this.renderCollection);
@@ -107,8 +147,38 @@ BeagleWizard.TagCollection = Backbone.Collection.extend({
  *
  */
 BeagleWizard.TagView = Backbone.Marionette.ItemView.extend({
+    events: {
+        'click .cancel-button': 'cancelEdit',
+        'click .edit-button': 'editMode',
+        'click .save-button': 'saveChanges'
+    },
+    tagName: 'tr',
     template: "#tag-template",
-    tagName: 'tr'
+    ui: {
+        display_elements: '.display-element',
+        edit_elements: '.edit-element',
+        edit_label: '.tag-edit-label'
+    },
+
+    cancelEdit: function(e){
+        this.ui.edit_label.val(this.model.get('label'));
+        this.ui.display_elements.removeClass('is-hidden');
+        this.ui.edit_elements.addClass('is-hidden');
+        this.render();
+    },
+
+    editMode: function(e){
+        this.ui.display_elements.addClass('is-hidden');
+        this.ui.edit_elements.removeClass('is-hidden');
+    },
+
+    saveChanges: function(e){
+        this.model.set('label', this.ui.edit_label.val());
+        this.model.save();
+        this.ui.display_elements.removeClass('is-hidden');
+        this.ui.edit_elements.addClass('is-hidden');
+        this.render();
+    }
 });
 
 

@@ -26,6 +26,6 @@ class Bookmark(Schema):
     id = fields.UUID()
     label = fields.String(required=True)
     modified = fields.DateTime()
-    tags = fields.List(fields.Nested(Tag), dump_only=True)
+    tags = fields.List(fields.Nested(Tag))
     text = fields.String()
     url = fields.String(required=True)
