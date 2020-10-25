@@ -7,7 +7,7 @@
     <title>Beagle Wizard</title>
     <link href="http://localhost:8000/fontawesome-free-5.14.0-web/css/all.css" crossorigin="anonymous" integrity="sha384-2u5nxrarE67xPTypS69k1tpTaYbAYZFApdwSbK4AnaNcmMWDf+b0GgCHRQaPPP17" rel="stylesheet">
     <link href="http://localhost:8000/bulmaswatch-darkly-0.8.1.min.css" crossorigin="anonymous" integrity="sha384-8lDxaFUSY2k04pcvbaw/ylpiGVb/Y5bfNwGM8wHY0BWNcxH6qGy85xNSxO225LzY" rel="stylesheet">
-    <link href="/static/style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 <body>
 
@@ -274,9 +274,9 @@
 <script defer src="http://localhost:8000/jquery-3.5.1.js" crossorigin="anonymous" integrity="sha384-/LjQZzcpTzaYn7qWqRIWYC5l8FWEZ2bIHIz0D73Uzba4pShEcdLdZyZkI4Kv676E"></script>
 <script defer src="http://localhost:8000/underscore-1.10.2.js" crossorigin="anonymous" integrity="sha384-/QQLKwe4iK6y3VuoTgrApMXZmDkYApTkPc+Xuea/O+iyWj1xMX6pqNtgMGsR/a1i"></script>
 <script defer src="http://localhost:8000/backbone-1.4.0.js" crossorigin="anonymous" integrity="sha384-nhWt56PME93S1JQLa+kxZkVkAPQAVXJ2QFp2upRdyHKS83dOhoiHLwkiWMcLjmPc"></script>
-<script defer src="http://localhost:8000/backbone.radio-v2.0.0.js" crossorigin="anonymous" integrity="sha384-asKSs9di8STRVbTNegrxOrlfDkv3kIaXmtK/FoUOG1ZL/fZ8+2B3B/YFsIHbGhL7"></script>
-<script defer src="http://localhost:8000/backbone.marionette-v1.8.8.js" crossorigin="anonymous" integrity="sha384-WSEzdcPxfZkqBx9920DgBjzBc5CZMHTFV0aTF20xiQptpDLIgmPJSCPU2AHFe5dO"></script>
-<script defer src="/static/scripting.js"></script>
+<script defer src="http://localhost:8000/backbone.radio-2.0.0.js" crossorigin="anonymous" integrity="sha384-asKSs9di8STRVbTNegrxOrlfDkv3kIaXmtK/FoUOG1ZL/fZ8+2B3B/YFsIHbGhL7"></script>
+<script defer src="http://localhost:8000/backbone.marionette-1.8.8.js" crossorigin="anonymous" integrity="sha384-WSEzdcPxfZkqBx9920DgBjzBc5CZMHTFV0aTF20xiQptpDLIgmPJSCPU2AHFe5dO"></script>
+<script defer src="{{ url_for('static', filename='scripting.js') }}"></script>
 
 </body>
 </html>
