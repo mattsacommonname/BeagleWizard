@@ -32,7 +32,7 @@ from forms import (
     AddBookmarkForm,
     AddTagForm,
     LoginForm)
-from main import app
+from app import app
 from pony.orm import db_session
 
 
