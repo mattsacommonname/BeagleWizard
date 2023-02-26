@@ -1,4 +1,4 @@
-/* Copyright 2020 Matthew Bishop
+/* Copyright 2023 Matthew Bishop
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,18 @@
 var BeagleWizard = {};
 
 
-(function(){
+(() => {
+
+const JSON_HEADER = {
+    "Content-Type": "application/json",
+};
+
+const bookmarkAddButton = $('#bookmark-add');
+const bookmarkAddLabelInput = $("#bookmark-label");
+const bookmarkAddTextInput = $("#bookmark-text");
+const bookmarkAddUrlInput = $("#bookmark-url");
+const tagAddButton = $('#tag-add');
+const tagAddLabelInput = $('#tag-label');
 
 /**
  * Application
@@ -32,16 +43,16 @@ BeagleWizard.App.addRegions({
     tagRegion: "#tag-list"
 });
 
-BeagleWizard.App.addInitializer(function(options){
-  let bookmarkTable = new BeagleWizard.BookmarkTableView({
-    collection: options.bookmarks
-  });
-  BeagleWizard.App.bookmarkRegion.show(bookmarkTable);
+BeagleWizard.App.addInitializer((options) => {
+    let bookmarkTable = new BeagleWizard.BookmarkTableView({
+        collection: options.bookmarks
+    });
+    BeagleWizard.App.bookmarkRegion.show(bookmarkTable);
 
-  let tagTable = new BeagleWizard.TagTableView({
-    collection: options.tags
-  });
-  BeagleWizard.App.tagRegion.show(tagTable);
+    let tagTable = new BeagleWizard.TagTableView({
+        collection: options.tags
+    });
+    BeagleWizard.App.tagRegion.show(tagTable);
 });
 
 
@@ -79,7 +90,7 @@ BeagleWizard.BookmarkView = Backbone.Marionette.ItemView.extend({
         edit_url: '.bookmark-edit-url'
     },
 
-    cancelEdit: function(e){
+    cancelEdit: function() {
         this.ui.edit_label.val(this.model.get('label'));
         this.ui.edit_text.val(this.model.get('text'));
         this.ui.edit_url.val(this.model.get('url'));
@@ -88,18 +99,17 @@ BeagleWizard.BookmarkView = Backbone.Marionette.ItemView.extend({
         this.render();
     },
 
-    editMode: function(e){
+    editMode: function() {
         this.ui.display_elements.addClass('is-hidden');
         this.ui.edit_elements.removeClass('is-hidden');
     },
 
-    saveChanges: function(e){
-        let updates = {
+    saveChanges: function() {
+        this.model.set({
             'label': this.ui.edit_label.val(),
             'text': this.ui.edit_text.val(),
             'url': this.ui.edit_url.val()
-        };
-        this.model.set(updates);
+        });
         this.model.save();
         this.ui.display_elements.removeClass('is-hidden');
         this.ui.edit_elements.addClass('is-hidden');
@@ -118,13 +128,11 @@ BeagleWizard.BookmarkTableView = Backbone.Marionette.CompositeView.extend({
     tagName: "table",
     template: "#bookmark-table-template",
 
-    initialize: function(){
+    initialize: function() {
         this.listenTo(this.collection, "sort", this.renderCollection);
     },
 
-    appendHtml: function(collectionView, itemView){
-        collectionView.$('tbody').append(itemView.el);
-    }
+    appendHtml: (collectionView, itemView) => collectionView.$('tbody').append(itemView.el)
 });
 
 
@@ -160,19 +168,19 @@ BeagleWizard.TagView = Backbone.Marionette.ItemView.extend({
         edit_label: '.tag-edit-label'
     },
 
-    cancelEdit: function(e){
+    cancelEdit: function() {
         this.ui.edit_label.val(this.model.get('label'));
         this.ui.display_elements.removeClass('is-hidden');
         this.ui.edit_elements.addClass('is-hidden');
         this.render();
     },
 
-    editMode: function(e){
+    editMode: function() {
         this.ui.display_elements.addClass('is-hidden');
         this.ui.edit_elements.removeClass('is-hidden');
     },
 
-    saveChanges: function(e){
+    saveChanges: function() {
         this.model.set('label', this.ui.edit_label.val());
         this.model.save();
         this.ui.display_elements.removeClass('is-hidden');
@@ -192,57 +200,53 @@ BeagleWizard.TagTableView = Backbone.Marionette.CompositeView.extend({
     template: "#tag-table-template",
     itemView: BeagleWizard.TagView,
 
-    initialize: function(){
+    initialize: function () {
         this.listenTo(this.collection, "sort", this.renderCollection);
     },
 
-    appendHtml: function(collectionView, itemView){
-        collectionView.$('tbody').append(itemView.el);
-    }
+    appendHtml: (collectionView, itemView) => collectionView.$('tbody').append(itemView.el)
 });
 
 
 // perform logic that needs the DOM to have finished loading
-$(document).ready(function(){
-    $('#bookmark-add').click(function(e) {
-        $.ajax({
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                label: $('#bookmark-label').val(),
-                text: $('#bookmark-text').val(),
-                url: $('#bookmark-url').val()
-            }),
-            dataType: "json",
-            type: 'POST',
-            url: '/b',
-            error: function(request, status, err) {
-                console.error(`error adding bookmark: ${err}`);
-            },
-            success: function(data, status, request) {
-                $('#bookmark-label').val('');
-                $('#bookmark-text').val('');
-                $('#bookmark-url').val('');
-                bookmarks.fetch();
-            }
-        });
+$(document).ready(() => {
+    bookmarkAddButton.click(async () => {
+        try {
+            await fetch("/b", {
+                body: JSON.stringify({
+                    Label: bookmarkAddLabelInput.val(),
+                    Text: bookmarkAddTextInput.val(),
+                    Url: bookmarkAddUrlInput.val()
+                }),
+                headers: JSON_HEADER,
+                method: "POST",
+            })
+
+            bookmarkAddLabelInput.val("");
+            bookmarkAddTextInput.val("");
+            bookmarkAddUrlInput.val("");
+            bookmarks.fetch();
+        } catch (err) {
+            console.error(`error adding bookmark: ${err}`);
+        }
     });
-    $('#tag-add').click(function(e) {
-        $.ajax({
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                label: $('#tag-label').val()
-            }),
-            dataType: "json",
-            type: 'POST',
-            url: '/t',
-            error: function(request, status, err) {
-                console.error(`error adding tag: ${err}`);
-            },
-            success: function(data, status, request) {
-                $('#tag-label').val('');
-                tags.fetch();
-            }
-        });
+
+    tagAddButton.click(async () => {
+        try {
+            await fetch("/t", {
+                body: JSON.stringify({
+                    label: tagAddLabelInput.val()
+                }),
+                headers: JSON_HEADER,
+                method: "POST",
+            });
+
+            tagAddLabelInput.val("");
+            tags.fetch();
+        }
+        catch (err) {
+            console.error(`error adding tag: ${err}`);
+        }
     });
 
     let bookmarks = new BeagleWizard.BookmarkCollection();

@@ -1,159 +1,166 @@
+@* Copyright 2023 Matthew Bishop
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+@page
 <!DOCTYPE html>
 <html class="has-navbar-fixed-top" lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Beagle Wizard</title>
-    <link href="http://localhost:8000/fontawesome-free-5.14.0-web/css/all.css" crossorigin="anonymous" integrity="sha384-2u5nxrarE67xPTypS69k1tpTaYbAYZFApdwSbK4AnaNcmMWDf+b0GgCHRQaPPP17" rel="stylesheet">
-    <link href="http://localhost:8000/bulmaswatch-darkly-0.8.1.min.css" crossorigin="anonymous" integrity="sha384-8lDxaFUSY2k04pcvbaw/ylpiGVb/Y5bfNwGM8wHY0BWNcxH6qGy85xNSxO225LzY" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="http://localhost:8000/fontawesome-free-5.14.0-web/css/all.css" crossorigin="anonymous"
+        integrity="sha384-2u5nxrarE67xPTypS69k1tpTaYbAYZFApdwSbK4AnaNcmMWDf+b0GgCHRQaPPP17" rel="stylesheet">
+    <link href="http://localhost:8000/bulmaswatch-darkly-0.8.1.min.css" crossorigin="anonymous"
+        integrity="sha384-8lDxaFUSY2k04pcvbaw/ylpiGVb/Y5bfNwGM8wHY0BWNcxH6qGy85xNSxO225LzY" rel="stylesheet">
+    <link href="~/style.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- notifications -->
+@*<!-- notifications -->
+@foreach (var message in Model.Messages)
+{
+    <div class="notification">@message</div>
+}*@
 
-{% set messages = get_flashed_messages() %}
-{% for message in messages %}
-    <div class="notification">{{ message }}</div>
-{% endfor %}
+@*<!-- login -->
 
-{% if not current_user.is_authenticated %}
-
-<!-- login -->
-
-<form action="{{ urls.login }}" method="post">
-    {{ forms.login.hidden_tag() }}
+<form action="/login" method="post">
     <div class="field">
-        {{ forms.login.name.label(class_='label') }}
+        <label for="login_username">username</label>
         <div class="control">
-            {{ forms.login.name(class_='input') }}
+            <input id="login_username" name="username" placeholder="username" type="text">
         </div>
     </div>
     <div class="field">
         <div class="control">
-            {{ forms.login.submit(class_='button') }}
+            <button type="submit">login</button>
         </div>
     </div>
-</form>
-
-{% else %}
+</form>*@
 
 <!-- header -->
 
 <section class="section">
-<div class="container">
-
-<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <div class="navbar-item">
-            Beagle Wizard
-        </div>
+    <div class="container">
+        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <div class="navbar-item">Beagle Wizard</div>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start"></div>
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <span class="icon">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <span>"username"</span>
+                    </div>
+                    <div class="navbar-item">
+                        <a href="#" class="button">
+                            <span class="icon">
+                                <i class="fas fa-cogs"></i>
+                            </span>
+                            <span>settings</span>
+                        </a>
+                    </div>
+                    <div class="navbar-item">
+                        <a href="{{ urls.logout }}" class="button">
+                            <span class="icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span>logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </div>
-    <div class="navbar-menu">
-        <div class="navbar-start"></div>
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <span class="icon">
-                    <i class="fas fa-user"></i>
-                </span>
-                <span>{{ current_user.name }}</span>
-            </div>
-            <div class="navbar-item">
-                <a href="#" class="button">
-                    <span class="icon">
-                        <i class="fas fa-cogs"></i>
-                    </span>
-                    <span>settings</span>
-                </a>
-            </div>
-            <div class="navbar-item">
-                <a href="{{ urls.logout }}" class="button">
-                    <span class="icon">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </span>
-                    <span>logout</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-</div>
 </section>
 
 <section>
-<div class="container">
-<div class="columns">
+    <div class="container">
+        <div class="columns">
 
-<div class="column is-four-fifths">
+            <div class="column is-four-fifths">
 
-<!-- bookmarks -->
+                <!-- bookmarks -->
 
-<div class="block">
-    <form>
-        <div class="field has-addons">
-            <div class="control has-icons-left">
-                {{ forms.add_bookmark.label(class_='input', placeholder='Bookmark label') }}
-                <span class="icon is-small is-left">
-                    <i class="fas fa-bookmark"></i>
-                </span>
+                <div class="block">
+                    <form>
+                        <div class="field has-addons">
+                            <div class="control has-icons-left">
+                                <input id="bookmark-label" placeholder="Bookmark label" type="input">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-bookmark"></i>
+                                </span>
+                            </div>
+                            <div class="control has-icons-left">
+                                <input id="bookmark-url" placeholder="URL" type="url">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </span>
+                            </div>
+                            <div class="control has-icons-left">
+                                <input id="bookmark-text" aria-placeholder="Description" type="text">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-sticky-note"></i>
+                                </span>
+                            </div>
+                            <div class="control">
+                                <button id="bookmark-add" class="button" type="button">
+                                    <i class="fas fa-plus" title="Add tag"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="bookmark-list" class="block"></div>
+
             </div>
-            <div class="control has-icons-left">
-                {{ forms.add_bookmark.url(class_='input', placeholder='URL') }}
-                <span class="icon is-small is-left">
-                    <i class="fas fa-external-link-alt"></i>
-                </span>
+            <div class="column is-one-fifth">
+
+                <!-- tags -->
+
+                <div class="block">
+                    <form>
+                        <div class="field has-addons">
+                            <div class="control has-icons-left">
+                                <input id="tag-label" aria-placeholder="Tag label" type="text">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-tag"></i>
+                                </span>
+                            </div>
+                            <div class="control">
+                                <button id="tag-add" class="button" type="button">
+                                    <i class="fas fa-plus" title="Add tag"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="tag-list" class="block"></div>
+
             </div>
-            <div class="control has-icons-left">
-                {{ forms.add_bookmark.text(class_='input', placeholder='Description') }}
-                <span class="icon is-small is-left">
-                    <i class="fas fa-sticky-note"></i>
-                </span>
-            </div>
-            <div class="control">
-                <button id="bookmark-add" class="button" type="button">
-                    <i class="fas fa-plus" title="Add tag"></i>
-                </button>
-            </div>
+
         </div>
-    </form>
-</div>
-
-<div id="bookmark-list" class="block"></div>
-
-</div>
-<div class="column is-one-fifth">
-
-<!-- tags -->
-
-<div class="block">
-    <form>
-        <div class="field has-addons">
-            <div class="control has-icons-left">
-                {{ forms.add_tag.label(class_='input', placeholder='Tag label') }}
-                <span class="icon is-small is-left">
-                    <i class="fas fa-tag"></i>
-                </span>
-            </div>
-            <div class="control">
-                <button id="tag-add" class="button" type="button">
-                    <i class="fas fa-plus" title="Add tag"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<div id="tag-list" class="block"></div>
-
-</div>
-
-</div>
-</div>
+    </div>
 </section>
-
-{% endif %}
 
 <!-- footer -->
 
@@ -206,12 +213,12 @@
     </td>
     <td>
         <div class="is-nowrap">
-        <% _.each(tags, function(tag) { %>
-            <span class="tag">
-                <%= tag.label %>
-                <button id="delete-<%= tag.id %>" class="delete is-small" type="button">x</button>
-            </span>
-        <% }); %>
+            <% _.each(tags, function(tag) { %>
+                <span class="tag">
+                    <%= tag.label %>
+                    <button id="delete-<%= tag.id %>" class="delete is-small" type="button">x</button>
+                </span>
+            <% }); %>
         </div>
     </td>
     <td>
@@ -271,12 +278,18 @@
 
 <!-- scripts -->
 
-<script defer src="http://localhost:8000/jquery-3.5.1.js" crossorigin="anonymous" integrity="sha384-/LjQZzcpTzaYn7qWqRIWYC5l8FWEZ2bIHIz0D73Uzba4pShEcdLdZyZkI4Kv676E"></script>
-<script defer src="http://localhost:8000/underscore-1.10.2.js" crossorigin="anonymous" integrity="sha384-/QQLKwe4iK6y3VuoTgrApMXZmDkYApTkPc+Xuea/O+iyWj1xMX6pqNtgMGsR/a1i"></script>
-<script defer src="http://localhost:8000/backbone-1.4.0.js" crossorigin="anonymous" integrity="sha384-nhWt56PME93S1JQLa+kxZkVkAPQAVXJ2QFp2upRdyHKS83dOhoiHLwkiWMcLjmPc"></script>
-<script defer src="http://localhost:8000/backbone.radio-2.0.0.js" crossorigin="anonymous" integrity="sha384-asKSs9di8STRVbTNegrxOrlfDkv3kIaXmtK/FoUOG1ZL/fZ8+2B3B/YFsIHbGhL7"></script>
-<script defer src="http://localhost:8000/backbone.marionette-1.8.8.js" crossorigin="anonymous" integrity="sha384-WSEzdcPxfZkqBx9920DgBjzBc5CZMHTFV0aTF20xiQptpDLIgmPJSCPU2AHFe5dO"></script>
-<script defer src="{{ url_for('static', filename='scripting.js') }}"></script>
+<script defer src="http://localhost:8000/jquery-3.5.1.js" crossorigin="anonymous"
+    integrity="sha384-/LjQZzcpTzaYn7qWqRIWYC5l8FWEZ2bIHIz0D73Uzba4pShEcdLdZyZkI4Kv676E"></script>
+<script defer src="http://localhost:8000/underscore-1.10.2.js" crossorigin="anonymous"
+    integrity="sha384-/QQLKwe4iK6y3VuoTgrApMXZmDkYApTkPc+Xuea/O+iyWj1xMX6pqNtgMGsR/a1i"></script>
+<script defer src="http://localhost:8000/backbone-1.4.0.js" crossorigin="anonymous"
+    integrity="sha384-nhWt56PME93S1JQLa+kxZkVkAPQAVXJ2QFp2upRdyHKS83dOhoiHLwkiWMcLjmPc"></script>
+<script defer src="http://localhost:8000/backbone.radio-2.0.0.js" crossorigin="anonymous"
+    integrity="sha384-asKSs9di8STRVbTNegrxOrlfDkv3kIaXmtK/FoUOG1ZL/fZ8+2B3B/YFsIHbGhL7"></script>
+<script defer src="http://localhost:8000/backbone.marionette-1.8.8.js" crossorigin="anonymous"
+    integrity="sha384-WSEzdcPxfZkqBx9920DgBjzBc5CZMHTFV0aTF20xiQptpDLIgmPJSCPU2AHFe5dO"></script>
+<script defer src="~/scripting.js"></script>
 
 </body>
+
 </html>
