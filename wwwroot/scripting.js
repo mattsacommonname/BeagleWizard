@@ -18,19 +18,122 @@ import { createApp } from 'http://localhost:8000/vue/3.2.47/vue.esm-browser.prod
 
 function document_loaded() {
     createApp({
+        //#region data
+
         data() {
-            this.nextBookmarkId = 0;
-            this.nextTagId = 0;
             return {
-                bookmarks: [
-                    { id: this.nextBookmarkId++, label: "Vanity", text: "https://www.mattsacommonname.com", url: "Look at me!" },
-                    { id: this.nextBookmarkId++, label: "BeagleWizard", text: "https://github.com/mattsacommonname/BeagleWizard", url: "So meta" },
-                    { id: this.nextBookmarkId++, label: "Vue", text: "https://vuejs.org", url: "framework" },
-                ],
+                /**
+                 * @property {object[]} List of all bookmarks.
+                 */
+                bookmarks: null,
+
+                /**
+                 * @property {boolean} Logged in.
+                 */
                 loggedIn: true,
-                tags: [{ id: this.nextTagId++, label: "dev" }],
-            }
-        }
+
+                /**
+                 * @property {object} New bookmark model.
+                 */
+                newBookmark: {
+                    label: null,
+                    text: null,
+                    url: null,
+                },
+
+                /**
+                 * @property {object} New tag model.
+                 */
+                newTag: {
+                    label: null,
+                },
+
+                /**
+                 * @property {object[]} List of tags.
+                 */
+                tags: null,
+            };
+        },
+
+        //#endregion
+
+        //#region methods
+
+        methods: {
+            /**
+             * Creates a bookmark by posting it to the appropriate REST endpoint.
+             */
+            async createBookmark() {
+                try {
+                    await fetch(
+                        "/b",
+                        {
+                            body: JSON.stringify(this.newBookmark),
+                            headers: { "Content-Type": "application/json" },
+                            method: "POST",
+                        },
+                    );
+                    this.newBookmark.label = null;
+                    this.newBookmark.text = null;
+                    this.newBookmark.url = null;
+                    await this.readAllBookmarks();
+                } catch (error) {
+                    console.error(error);
+                    return;
+                }
+            },
+
+            /**
+             * Creates a tag by posting it to the appropriate REST endpoint.
+             */
+            async createTag() {
+                try {
+                    await fetch(
+                        "/t",
+                        {
+                            body: JSON.stringify(this.newTag),
+                            headers: { "Content-Type": "application/json" },
+                            method: "POST",
+                        },
+                    );
+                    this.newTag.label = null;
+                    await this.readAllTags();
+                } catch (error) {
+                    console.error(error);
+                    return;
+                }
+            },
+
+            /**
+             * Reads all bookmarks from the appropriate REST endpoint.
+             */
+            async readAllBookmarks() {
+                let r = await fetch("/b");
+                this.bookmarks = await r.json();
+            },
+
+            /**
+             * Reads all tags from the appropriate REST endpoint.
+             */
+            async readAllTags() {
+                let r = await fetch("/t");
+                this.tags = await r.json();
+            },
+        },
+
+        //#endregion
+
+        //#region mounted event
+
+        /**
+         * Vue app mounted logic.
+         */
+        mounted() {
+            this.readAllBookmarks();
+            this.readAllTags();
+        },
+
+        //#endregion
     }).mount("#app");
 }
 

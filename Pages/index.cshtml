@@ -95,25 +95,25 @@
                     <form>
                         <div class="field has-addons">
                             <div class="control has-icons-left">
-                                <input id="bookmark-label" placeholder="Bookmark label" type="input">
+                                <input placeholder="Bookmark label" type="text" v-model="newBookmark.label">
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-bookmark"></i>
                                 </span>
                             </div>
                             <div class="control has-icons-left">
-                                <input id="bookmark-url" placeholder="URL" type="url">
+                                <input placeholder="URL" type="url" v-model="newBookmark.url">
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-external-link-alt"></i>
                                 </span>
                             </div>
                             <div class="control has-icons-left">
-                                <input id="bookmark-text" aria-placeholder="Description" type="text">
+                                <input placeholder="Description" type="text" v-model="newBookmark.text">
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-sticky-note"></i>
                                 </span>
                             </div>
                             <div class="control">
-                                <button id="bookmark-add" class="button" type="button">
+                                <button id="bookmark-add" class="button" type="button" @@click="createBookmark">
                                     <i class="fas fa-plus" title="Add tag"></i>
                                 </button>
                             </div>
@@ -196,7 +196,7 @@
                     <form>
                         <div class="field has-addons">
                             <div class="control has-icons-left">
-                                <input id="tag-label" aria-placeholder="Tag label" type="text">
+                                <input id="tag-label" placeholder="Label" type="text">
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-tag"></i>
                                 </span>
@@ -265,7 +265,7 @@
     <div class="container">
         <div class="field">
             <div class="control has-icons-left">
-                <input aria-placeholder="username" class="input" type="text" v-model="username">
+                <input class="input" placeholder="User name" type="text" v-model="username">
                 <span class="icon is-left is-small">
                     <i class="fas fa-user"></i>
                 </span>
