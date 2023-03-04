@@ -18,6 +18,28 @@ import { createApp } from 'http://localhost:8000/vue/3.2.47/vue.esm-browser.prod
 
 function document_loaded() {
     createApp({
+        //#region computed
+
+        computed: {
+            /**
+             * Logged in.
+             * @returns {boolean} true if logged in, false if not
+             */
+            loggedIn() {
+                return true;
+            },
+
+            /**
+             * User name.
+             * @returns {string} User name.
+             */
+            userName() {
+                return "unknown";
+            }
+        },
+
+        //#endregion
+
         //#region data
 
         data() {
@@ -26,11 +48,6 @@ function document_loaded() {
                  * @property {object[]} List of all bookmarks.
                  */
                 bookmarks: null,
-
-                /**
-                 * @property {boolean} Logged in.
-                 */
-                loggedIn: true,
 
                 /**
                  * @property {object} New bookmark model.
