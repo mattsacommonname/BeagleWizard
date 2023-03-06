@@ -27,6 +27,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseInMemoryDatabase("BeagleWizard"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
