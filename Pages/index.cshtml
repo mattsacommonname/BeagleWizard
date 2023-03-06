@@ -196,13 +196,13 @@
                     <form>
                         <div class="field has-addons">
                             <div class="control has-icons-left">
-                                <input id="tag-label" placeholder="Label" type="text">
+                                <input id="tag-label" placeholder="Label" type="text" v-model="newTag.label">
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-tag"></i>
                                 </span>
                             </div>
                             <div class="control">
-                                <button id="tag-add" class="button" type="button">
+                                <button id="tag-add" class="button" type="button" @@click="createTag">
                                     <i class="fas fa-plus" title="Add tag"></i>
                                 </button>
                             </div>
@@ -226,7 +226,7 @@
                                     </span>
                                     <span class="edit-element is-hidden">
                                         <div class="control">
-                                            <input class="tag-edit-label" value="{{ t.label }}">
+                                            <input class="tag-edit-label" type="text" value="{{ t.label }}">
                                         </div>
                                     </span>
                                 </td>
