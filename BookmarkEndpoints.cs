@@ -1,3 +1,10 @@
+#region usings
+
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.AspNetCore.Http.TypedResults;
+
+#endregion
+
 /// <summary>
 /// Bookmark endpoints.
 /// </summary>
@@ -30,11 +37,6 @@ public static class BookmarkEndpoints
     public const string CreateName = $"{BaseName}.{nameof(Create)}";
 
     /// <summary>
-    /// Relative path for Create endpoint.
-    /// </summary>
-    public const string CreatePath = RootPath;
-
-    /// <summary>
     /// Endpoint for creating a bookmark.
     /// </summary>
     /// <param name="inputBookmark">The new bookmark data.</param>
@@ -48,11 +50,11 @@ public static class BookmarkEndpoints
         db.Bookmarks.Add(inputBookmark);
         await db.SaveChangesAsync();
 
-        var uri = linker.GetPathByName(ReadName, new {id = inputBookmark.Id});
-        if(uri is null)
-            return TypedResults.Problem("Failed to get bookmark read path");
+        var uri = linker.GetPathByName(ReadName, new { id = inputBookmark.Id });
+        if (uri is null)
+            return Problem("Failed to get bookmark read path");
 
-        return TypedResults.Created(uri, inputBookmark);
+        return Created(uri, inputBookmark);
     }
 
     #endregion
@@ -65,11 +67,6 @@ public static class BookmarkEndpoints
     public const string DeleteName = $"{BaseName}.{nameof(Delete)}";
 
     /// <summary>
-    /// Relative path for delete endpoint.
-    /// </summary>
-    public const string DeletePath = IdPath;
-
-    /// <summary>
     /// Endpoint for deleting a bookmark.
     /// </summary>
     /// <param name="id">The bookmark to delete's ID.</param>
@@ -79,12 +76,12 @@ public static class BookmarkEndpoints
     {
         var bookmark = await db.Bookmarks.FindAsync(id);
         if (bookmark is null)
-            return TypedResults.NotFound();
+            return NotFound();
 
         db.Bookmarks.Remove(bookmark);
         await db.SaveChangesAsync();
 
-        return TypedResults.Ok(bookmark);
+        return Ok(bookmark);
     }
 
     #endregion
@@ -97,15 +94,15 @@ public static class BookmarkEndpoints
     /// <param name="routeBuilder">Route builder to map with.</param>
     public static void Map(IEndpointRouteBuilder routeBuilder)
     {
-        routeBuilder.MapDelete(DeletePath, Delete)
+        routeBuilder.MapDelete(IdPath, Delete)
             .WithName(DeleteName);
-        routeBuilder.MapGet(ReadPath, Read)
+        routeBuilder.MapGet(IdPath, Read)
             .WithName(ReadName);
-        routeBuilder.MapGet(ReadAllPath, ReadAll)
+        routeBuilder.MapGet(RootPath, ReadAll)
             .WithName(ReadAllName);
-        routeBuilder.MapPost(CreatePath, Create)
+        routeBuilder.MapPost(RootPath, Create)
             .WithName(CreateName);
-        routeBuilder.MapPut(UpdatePath, Update)
+        routeBuilder.MapPut(IdPath, Update)
             .WithName(UpdateName);
     }
 
@@ -119,18 +116,15 @@ public static class BookmarkEndpoints
     public const string ReadName = $"{BaseName}.{nameof(Read)}";
 
     /// <summary>
-    /// Relative path for Read endpoint.
-    /// </summary>
-    public const string ReadPath = IdPath;
-
-    /// <summary>
     /// Endpoint for Reading an individual bookmark.
     /// </summary>
     /// <param name="id">The bookmark to read's ID.</param>
     /// <param name="db">The database storing bookmarks</param>
     /// <returns>HTTP response.</returns>
     public static async Task<IResult> Read(int id, BeagleWizardDb db)
-        => await db.Bookmarks.FindAsync(id) is BookmarkEntity b ? TypedResults.Ok(b) : TypedResults.NotFound();
+        => await db.Bookmarks.Include(p => p.Tags).FirstOrDefaultAsync(b => b.Id == id) is BookmarkEntity b
+            ? Ok(b)
+            : NotFound();
 
     /// <summary>
     /// Name for Read all endpoint.
@@ -138,16 +132,11 @@ public static class BookmarkEndpoints
     public const string ReadAllName = $"{BaseName}.{nameof(ReadAll)}";
 
     /// <summary>
-    /// Relative path for Read all endpoint.
-    /// </summary>
-    public const string ReadAllPath = RootPath;
-
-    /// <summary>
     /// Endpoint for Reading all bookmarks.
     /// </summary>
     /// <param name="db">The database storing bookmarks</param>
     /// <returns>HTTP response.</returns>
-    public static IResult ReadAll(BeagleWizardDb db) => TypedResults.Ok(db.Bookmarks);
+    public static IResult ReadAll(BeagleWizardDb db) => Ok(db.Bookmarks.Include(p => p.Tags));
 
     #endregion
 
@@ -159,11 +148,6 @@ public static class BookmarkEndpoints
     public const string UpdateName = $"{BaseName}.{nameof(Update)}";
 
     /// <summary>
-    /// Relative path for Update endpoint.
-    /// </summary>
-    public const string UpdatePath = IdPath;
-
-    /// <summary>
     /// Endpoint for updating a bookmark.
     /// </summary>
     /// <param name="id">The bookmark to update's ID.</param>
@@ -172,12 +156,10 @@ public static class BookmarkEndpoints
     /// <returns>HTTP response.</returns>
     public static async Task<IResult> Update(int id, BookmarkEntity inputBookmark, BeagleWizardDb db)
     {
-        var bookmark = await db.Bookmarks.FindAsync(id);
-
-        if (bookmark is null)
-            return TypedResults.NotFound();
+        var bookmark = await db.Bookmarks.Include(b => b.Tags).SingleAsync(b => b.Id == id);
 
         bookmark.Label = inputBookmark.Label;
+        bookmark.Tags = inputBookmark.Tags;
         bookmark.Text = inputBookmark.Text;
         bookmark.Url = inputBookmark.Url;
 
@@ -185,7 +167,7 @@ public static class BookmarkEndpoints
 
         await db.SaveChangesAsync();
 
-        return TypedResults.NoContent();
+        return NoContent();
     }
 
     #endregion

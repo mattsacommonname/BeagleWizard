@@ -1,3 +1,9 @@
+#region usings
+
+using static Microsoft.AspNetCore.Http.TypedResults;
+
+#endregion
+
 /// <summary>
 /// Tag endpoints.
 /// </summary>
@@ -30,11 +36,6 @@ public static class TagEndpoints
     public const string CreateName = $"{BaseName}.{nameof(Create)}";
 
     /// <summary>
-    /// Relative path for Create endpoint.
-    /// </summary>
-    public const string CreatePath = RootPath;
-
-    /// <summary>
     /// Endpoint for creating a tag.
     /// </summary>
     /// <param name="inputBookmark">The new tag data.</param>
@@ -48,9 +49,9 @@ public static class TagEndpoints
 
         var uri = linker.GetPathByName(ReadName, new { id = inputTag.Id });
         if(uri is null)
-            return TypedResults.Problem("Failed to get tag read path");
+            return Problem("Failed to get tag read path");
 
-        return TypedResults.Created(uri, inputTag);
+        return Created(uri, inputTag);
     }
 
     #endregion
@@ -63,11 +64,6 @@ public static class TagEndpoints
     public const string DeleteName = $"{BaseName}.{nameof(Delete)}";
 
     /// <summary>
-    /// Relative path for delete endpoint.
-    /// </summary>
-    public const string DeletePath = IdPath;
-
-    /// <summary>
     /// Endpoint for deleting a tag.
     /// </summary>
     /// <param name="id">The tag to delete's ID.</param>
@@ -77,12 +73,12 @@ public static class TagEndpoints
     {
         var tag = await db.Tags.FindAsync(id);
         if (tag is null)
-            return TypedResults.NotFound();
+            return NotFound();
 
         db.Tags.Remove(tag);
         await db.SaveChangesAsync();
 
-        return TypedResults.Ok(tag);
+        return Ok(tag);
     }
 
     #endregion
@@ -95,15 +91,15 @@ public static class TagEndpoints
     /// <param name="routeBuilder">Route builder to map with.</param>
     public static void Map(IEndpointRouteBuilder routeBuilder)
     {
-        routeBuilder.MapDelete(DeletePath, Delete)
+        routeBuilder.MapDelete(IdPath, Delete)
             .WithName(DeleteName);
-        routeBuilder.MapGet(ReadPath, Read)
+        routeBuilder.MapGet(IdPath, Read)
             .WithName(ReadName);
-        routeBuilder.MapGet(ReadAllPath, ReadAll)
+        routeBuilder.MapGet(RootPath, ReadAll)
             .WithName(ReadAllName);
-        routeBuilder.MapPost(CreatePath, Create)
+        routeBuilder.MapPost(RootPath, Create)
             .WithName(CreateName);
-        routeBuilder.MapPut(UpdatePath, Update)
+        routeBuilder.MapPut(IdPath, Update)
             .WithName(UpdateName);
     }
 
@@ -117,18 +113,13 @@ public static class TagEndpoints
     public const string ReadName = $"{BaseName}.{nameof(Read)}";
 
     /// <summary>
-    /// Relative path for Read endpoint.
-    /// </summary>
-    public const string ReadPath = IdPath;
-
-    /// <summary>
     /// Endpoint for Reading an individual tag.
     /// </summary>
     /// <param name="id">The tag to read's ID.</param>
     /// <param name="db">The database storing tags.</param>
     /// <returns>HTTP response.</returns>
     public static async Task<IResult> Read(int id, BeagleWizardDb db)
-        => await db.Tags.FindAsync(id) is TagEntity b ? TypedResults.Ok(b) : TypedResults.NotFound();
+        => await db.Tags.FindAsync(id) is TagEntity b ? Ok(b) : NotFound();
 
     /// <summary>
     /// Name for Read all endpoint.
@@ -136,16 +127,11 @@ public static class TagEndpoints
     public const string ReadAllName = $"{BaseName}.{nameof(ReadAll)}";
 
     /// <summary>
-    /// Relative path for Read all endpoint.
-    /// </summary>
-    public const string ReadAllPath = RootPath;
-
-    /// <summary>
     /// Endpoint for Reading all tags.
     /// </summary>
     /// <param name="db">The database storing tags.</param>
     /// <returns>HTTP response.</returns>
-    public static IResult ReadAll(BeagleWizardDb db) => TypedResults.Ok(db.Tags);
+    public static IResult ReadAll(BeagleWizardDb db) => Ok(db.Tags);
 
     #endregion
 
@@ -155,11 +141,6 @@ public static class TagEndpoints
     /// Name for Update endpoint.
     /// </summary>
     public const string UpdateName = $"{BaseName}.{nameof(Update)}";
-
-    /// <summary>
-    /// Relative path for Update endpoint.
-    /// </summary>
-    public const string UpdatePath = IdPath;
 
     /// <summary>
     /// Endpoint for updating a tag.
@@ -173,13 +154,13 @@ public static class TagEndpoints
         var tag = await db.Tags.FindAsync(id);
 
         if (tag is null)
-            return TypedResults.NotFound();
+            return NotFound();
 
         tag.Label = inputTag.Label;
 
         await db.SaveChangesAsync();
 
-        return TypedResults.NoContent();
+        return NoContent();
     }
 
     #endregion
