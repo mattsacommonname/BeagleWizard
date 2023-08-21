@@ -1,6 +1,14 @@
+#region usings
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+#endregion
+
 /// <summary>
 /// Bookmark data entity.
 /// </summary>
+[Table("Bookmarks")]
 public class BookmarkEntity
 {
     #region public properties
@@ -16,6 +24,7 @@ public class BookmarkEntity
     /// <remarks>
     /// Ideally, this should never change after creation.
     /// </remarks>
+    [Required]
     public DateTime Created { get; set; }
 
     /// <summary>
@@ -24,7 +33,9 @@ public class BookmarkEntity
     /// <remarks>
     /// This should be unique.
     /// </remarks>
-    public string? Label { get; set; }
+    [Required]
+    [StringLength(512)]
+    public string Label { get; set; } = null!;
 
     /// <summary>
     /// Last modification of this entity.
@@ -32,6 +43,7 @@ public class BookmarkEntity
     /// <remarks>
     /// Should not be user editable.
     /// </remarks>
+    [Required]
     public DateTime Modified { get; set; }
 
     // public IEnumerable<string>? Tags { get; set; }
@@ -39,21 +51,15 @@ public class BookmarkEntity
     /// <summary>
     /// User-defined description of the bookmark.
     /// </summary>
+    [StringLength(4096)]
     public string? Text { get; set; }
 
     /// <summary>
     /// URL of the bookmark.
     /// </summary>
-    public string? Url { get; set; }
-
-    #endregion
-
-    #region constructors
-
-    /// <summary>
-    /// Empty constructor.
-    /// </summary>
-    public BookmarkEntity() { }
+    [Required]
+    [StringLength(2048)]
+    public string Url { get; set; } = null!;
 
     #endregion
 }

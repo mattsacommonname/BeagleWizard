@@ -1,6 +1,17 @@
+#region  usings
+
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+#endregion
+
 /// <summary>
 /// Tag data entity.
 /// </summary>
+[Table("Tags")]
+[Index(nameof(Label), IsUnique = true)]
 public class TagEntity
 {
     #region public properties
@@ -13,19 +24,9 @@ public class TagEntity
     /// <summary>
     /// Tag's label.
     /// </summary>
-    /// <remarks>
-    /// Should be unique.
-    /// </remarks>
-    public string? Label { get; set; }
-
-    #endregion
-
-    #region constructors
-
-    /// <summary>
-    /// Empty constructor.
-    /// </summary>
-    public TagEntity() { }
+    [Required]
+    [StringLength(64)]
+    public string Label { get; set; } = null!;
 
     #endregion
 }
