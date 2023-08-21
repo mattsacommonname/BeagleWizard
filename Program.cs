@@ -30,16 +30,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders()
     .AddConsole();
 
-builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseInMemoryDatabase("BeagleWizard"))
     .AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
-app.UseStaticFiles()
-    .UseRouting()
-    .UseAuthorization();
-app.MapRazorPages();
+app.UseDefaultFiles()
+    .UseStaticFiles();
 
 var bookmarkEndpoints = app.MapGroup("/b");
 BookmarkEndpoints.Map(bookmarkEndpoints);
