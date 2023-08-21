@@ -22,6 +22,12 @@ public class TagEntity
     public int Id { get; set; }
 
     /// <summary>
+    /// Associated bookmarks.
+    /// </summary>
+    [JsonIgnore]
+    public ICollection<BookmarkEntity>? Bookmarks { get; set; }
+
+    /// <summary>
     /// Tag's label.
     /// </summary>
     [Required]

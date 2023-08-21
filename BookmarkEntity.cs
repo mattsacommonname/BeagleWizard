@@ -46,7 +46,10 @@ public class BookmarkEntity
     [Required]
     public DateTime Modified { get; set; }
 
-    // public IEnumerable<string>? Tags { get; set; }
+    /// <summary>
+    /// Associated tags.
+    /// </summary>
+    public ICollection<TagEntity>? Tags { get; set; }
 
     /// <summary>
     /// User-defined description of the bookmark.
