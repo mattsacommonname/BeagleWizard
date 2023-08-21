@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders()
     .AddConsole();
 
-builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseInMemoryDatabase("BeagleWizard"))
+builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseSqlite("Data Source=var/bw.db"))
     .AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
