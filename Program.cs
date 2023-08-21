@@ -27,18 +27,18 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.ClearProviders()
+    .AddConsole();
 
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseInMemoryDatabase("BeagleWizard"));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseInMemoryDatabase("BeagleWizard"))
+    .AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
+app.UseStaticFiles()
+    .UseRouting()
+    .UseAuthorization();
 app.MapRazorPages();
 
 var bookmarkEndpoints = app.MapGroup("/b");
