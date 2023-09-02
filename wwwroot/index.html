@@ -64,7 +64,7 @@ limitations under the License.
                         </a>
                     </div>
                     <div class="navbar-item">
-                        <a href="{{ urls.logout }}" class="button">
+                        <a class="button">
                             <span class="icon">
                                 <i class="fas fa-sign-out-alt"></i>
                             </span>
@@ -129,17 +129,17 @@ limitations under the License.
                             <tr v-for="b in bookmarks" :key="b.id">
                                 <td>
                                     <span class="display-element is-nowrap">
-                                        <a href="{{ b.url }}" target="_blank">
+                                        <a :href="b.url" target="_blank">
                                             {{ b.label }}
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
                                     </span>
                                     <span class="edit-element is-hidden">
                                         <div class="control">
-                                            <input class="bookmark-edit-label input" value="{{ b.label }}">
+                                            <input class="bookmark-edit-label input" :value="b.label">
                                         </div>
                                         <div class="control">
-                                            <input class="bookmark-edit-url input" value="{{ b.url }}">
+                                            <input class="bookmark-edit-url input" :value="b.url">
                                         </div>
                                     </span>
                                 </td>
@@ -149,7 +149,7 @@ limitations under the License.
                                     </span>
                                     <span class="edit-element is-hidden">
                                         <div class="control">
-                                            <textarea class="bookmark-edit-text is-expanded textarea">{{ text }}</textarea>
+                                            <textarea class="bookmark-edit-text is-expanded textarea">{{ b.text }}</textarea>
                                         </div>
                                     </span>
                                 </td>
@@ -157,7 +157,7 @@ limitations under the License.
                                     <div class="is-nowrap">
                                         <span v-for="t in b.tags" class="tag">
                                             {{ t.label }}
-                                            <button id="delete-{{ t.id }}" class="delete is-small" type="button">x</button>
+                                            <button :id="`delete-${t.id}`" class="delete is-small" type="button">x</button>
                                         </span>
                                     </div>
                                 </td>
@@ -216,11 +216,11 @@ limitations under the License.
                             <tr v-for="t in tags">
                                 <td>
                                     <span class="display-element is-nowrap">
-                                        <a href="/t/{{ t.id }}">{{ t.label }}</a>
+                                        <a :href="`/t/${t.id}`">{{ t.label }}</a>
                                     </span>
                                     <span class="edit-element is-hidden">
                                         <div class="control">
-                                            <input class="tag-edit-label" type="text" value="{{ t.label }}">
+                                            <input class="tag-edit-label" type="text" :value="t.label">
                                         </div>
                                     </span>
                                 </td>
