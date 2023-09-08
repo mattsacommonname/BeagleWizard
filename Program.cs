@@ -23,6 +23,16 @@ using Microsoft.EntityFrameworkCore;
 
 #endregion
 
+#region constants
+
+const string AppUrlDefault = "http://localhost:3000";
+const string AppUrlVariable = "URL";
+
+const string SQLiteSourceDefault = "var/bw.db";
+const string SQLiteSourceVariable = "SQLITE_SOURCE";
+
+#endregion
+
 #region build & run web app
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +40,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders()
     .AddConsole();
 
-builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseSqlite("Data Source=var/bw.db"))
+var sqliteSource = Environment.GetEnvironmentVariable(SQLiteSourceVariable) ?? SQLiteSourceDefault;
+
+builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseSqlite($"Data Source={sqliteSource}"))
     .AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
@@ -38,12 +50,14 @@ var app = builder.Build();
 app.UseDefaultFiles()
     .UseStaticFiles();
 
-var bookmarkEndpoints = app.MapGroup("/b");
+var bookmarkEndpoints = app.MapGroup(BookmarkEndpoints.Prefix);
 BookmarkEndpoints.Map(bookmarkEndpoints);
 
-var tagEndpoints = app.MapGroup("/t");
+var tagEndpoints = app.MapGroup(TagEndpoints.Prefix);
 TagEndpoints.Map(tagEndpoints);
 
-app.Run();
+var url = Environment.GetEnvironmentVariable(AppUrlVariable) ?? AppUrlDefault;
+
+app.Run(url);
 
 #endregion

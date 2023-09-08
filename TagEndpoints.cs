@@ -17,6 +17,11 @@ public static class TagEndpoints
     public const string BaseName = "Tag";
 
     /// <summary>
+    /// Suggested URL path prefix.
+    /// </summary>
+    public const string Prefix = "/t";
+
+    /// <summary>
     /// Common root path.
     /// </summary>
     private const string RootPath = "/";

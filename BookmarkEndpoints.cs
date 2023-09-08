@@ -18,6 +18,11 @@ public static class BookmarkEndpoints
     public const string BaseName = "Bookmark";
 
     /// <summary>
+    /// Suggested URL path prefix.
+    /// </summary>
+    public const string Prefix = "/b";
+
+    /// <summary>
     /// Common root path.
     /// </summary>
     private const string RootPath = "/";
