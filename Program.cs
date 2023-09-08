@@ -40,12 +40,14 @@ const string SQLiteSourceVariable = "SQLITE_SOURCE";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders()
+builder.Logging
+    .ClearProviders()
     .AddConsole();
 
 var sqliteSource = Environment.GetEnvironmentVariable(SQLiteSourceVariable) ?? SQLiteSourceDefault;
 
-builder.Services.AddDbContext<BeagleWizardDb>(o => o.UseSqlite($"Data Source={sqliteSource}"))
+builder.Services
+    .AddDbContext<BeagleWizardDb>(o => o.UseSqlite($"Data Source={sqliteSource}"))
     .AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
