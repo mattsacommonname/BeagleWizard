@@ -59,11 +59,9 @@ var staticFileOptions = new StaticFileOptions  // TODO: this should probably onl
 app.UseDefaultFiles()
     .UseStaticFiles(staticFileOptions);
 
-var bookmarkEndpoints = app.MapGroup(BookmarkEndpoints.Prefix);
-BookmarkEndpoints.Map(bookmarkEndpoints);
-
-var tagEndpoints = app.MapGroup(TagEndpoints.Prefix);
-TagEndpoints.Map(tagEndpoints);
+app.MapEndpoints(
+    BookmarkEndpoints.Mapping,
+    TagEndpoints.Mapping);
 
 var url = Environment.GetEnvironmentVariable(AppUrlVariable) ?? AppUrlDefault;
 

@@ -17,6 +17,11 @@ public static class TagEndpoints
     public const string BaseName = "Tag";
 
     /// <summary>
+    /// Endpoint mapping tuple.
+    /// </summary>
+    public static readonly (string prefix, Action<IEndpointRouteBuilder>) Mapping = (Prefix, Map);
+
+    /// <summary>
     /// Suggested URL path prefix.
     /// </summary>
     public const string Prefix = "/t";

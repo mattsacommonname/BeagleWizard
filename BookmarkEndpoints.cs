@@ -18,6 +18,11 @@ public static class BookmarkEndpoints
     public const string BaseName = "Bookmark";
 
     /// <summary>
+    /// Endpoint mapping tuple.
+    /// </summary>
+    public static readonly (string prefix, Action<IEndpointRouteBuilder>) Mapping = (Prefix, Map);
+
+    /// <summary>
     /// Suggested URL path prefix.
     /// </summary>
     public const string Prefix = "/b";
