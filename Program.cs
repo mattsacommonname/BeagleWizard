@@ -44,7 +44,7 @@ builder.Logging
     .ClearProviders()
     .AddConsole();
 
-var sqliteSource = Environment.GetEnvironmentVariable(SQLiteSourceVariable) ?? SQLiteSourceDefault;
+var sqliteSource = GetSetting(SQLiteSourceVariable, SQLiteSourceDefault);
 
 builder.Services
     .AddDbContext<BeagleWizardDb>(o => o.UseSqlite($"Data Source={sqliteSource}"))
@@ -63,8 +63,21 @@ app.MapEndpoints(
     BookmarkEndpoints.Mapping,
     TagEndpoints.Mapping);
 
-var url = Environment.GetEnvironmentVariable(AppUrlVariable) ?? AppUrlDefault;
+var url = GetSetting(AppUrlVariable, AppUrlDefault);
 
 app.Run(url);
 
 #endregion
+
+/// <summary>
+/// Gets a setting value, or returns a default.
+/// </summary>
+/// <param name="name">Name of the setting to retrieve.</param>
+/// <param name="defaultValue">Default value to return if the setting is not set.</param>
+/// <returns>Setting value or the default.</returns>
+/// <remarks>
+/// This will retrieve the environment value that corresponds to <paramref name="name"/>, or returns
+/// <paramref name="defaultValue"/>.
+/// </remarks>
+static string? GetSetting(string name, string? defaultValue = null)
+    => Environment.GetEnvironmentVariable(name) ?? defaultValue;
